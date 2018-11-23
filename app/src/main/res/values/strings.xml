@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DJIDronePilot</string>
+    <string name="camera_mode">Camera Mode</string>
+    <string name="pilot_mode">Pilot Mode</string>
+    <string name="start_flight">Start Flight</string>
+
 </resources>
