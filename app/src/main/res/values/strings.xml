@@ -3,5 +3,5 @@
     <string name="camera_mode">Camera Mode</string>
     <string name="pilot_mode">Pilot Mode</string>
     <string name="start_flight">Start Flight</string>
-
+    <string name="success">Success</string>
 </resources>
