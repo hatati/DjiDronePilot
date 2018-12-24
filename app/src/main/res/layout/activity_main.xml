@@ -43,62 +43,50 @@
         android:id="@+id/textview_simulator"/>
 
     <Button
+        android:id="@+id/btn_force_land"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enable Virtual Stick"
-        style="@style/common_button"
-        android:id="@+id/btn_enable_virtual_stick"
-        android:layout_marginLeft="5dp"
-        android:layout_alignTop="@+id/btn_start_simulator"
+        android:layout_alignEnd="@+id/directionJoystickRight"
         android:layout_alignStart="@+id/directionJoystickRight"
-        android:layout_marginTop="0dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Disable Virtual Stick"
-        style="@style/common_button"
-        android:id="@+id/btn_disable_virtual_stick"
-        android:layout_below="@+id/btn_enable_virtual_stick"
-        android:layout_alignStart="@+id/btn_enable_virtual_stick"
+        android:layout_below="@+id/btn_start_simulator"
         android:layout_marginLeft="0dp"
-        android:layout_alignEnd="@+id/btn_enable_virtual_stick" />
+        android:text="Force Land" />
 
     <Button
+        android:id="@+id/btn_take_off"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take Off"
-        style="@style/common_button"
-        android:id="@+id/btn_take_off"
-        android:layout_alignTop="@+id/btn_disable_virtual_stick"
-        android:layout_alignStart="@+id/btn_start_simulator"
+        android:layout_alignTop="@+id/btn_force_land"
+        android:layout_below="@+id/textview_simulator"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp"
-        android:layout_alignEnd="@+id/btn_start_simulator" />
+        android:text="Take Off" />
 
     <ToggleButton
         android:id="@+id/btn_start_simulator"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_simulator"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="107dp"
         android:text="Start Simulator"
         android:textOff="Start Simulator"
-        android:textOn="Stop Simulator"
-        style="@style/common_button"
-        android:layout_below="@+id/textview_simulator"
-        android:layout_toEndOf="@+id/btn_enable_virtual_stick"
-        android:layout_marginTop="107dp"
-        android:layout_marginLeft="10dp" />
+        android:textOn="Stop Simulator" />
 
     <Button
+        android:id="@+id/btn_land"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Land"
-        style="@style/common_button"
-        android:id="@+id/btn_land"
-        android:layout_alignTop="@+id/btn_take_off"
-        android:layout_marginTop="0dp"
         android:layout_alignEnd="@+id/directionJoystickLeft"
-        android:layout_toEndOf="@+id/btn_take_off"
-        android:layout_marginLeft="10dp" />
+        android:layout_alignStart="@+id/directionJoystickLeft"
+        android:layout_alignTop="@+id/btn_take_off"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:text="Land" />
 
     <com.example.nermi.djidronepilot.OnScreenJoystick
         android:id="@+id/directionJoystickRight"
