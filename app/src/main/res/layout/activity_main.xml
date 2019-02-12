@@ -42,77 +42,67 @@
         android:text="Simulator is off."
         android:id="@+id/textview_simulator"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/test_button"
-        android:text="Test"
-        android:onClick="testModel"/>
-
-    <Button
-        android:id="@+id/btn_force_land"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/directionJoystickRight"
-        android:layout_alignStart="@+id/directionJoystickRight"
-        android:layout_below="@+id/btn_start_simulator"
-        android:layout_marginLeft="0dp"
-        android:text="Force Land" />
-
-    <Button
-        android:id="@+id/btn_take_off"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_force_land"
-        android:layout_below="@+id/textview_simulator"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:text="Take Off" />
-
     <ToggleButton
         android:id="@+id/btn_start_simulator"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textview_simulator"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="107dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:text="Start Simulator"
         android:textOff="Start Simulator"
         android:textOn="Stop Simulator" />
+
+    <Button
+        android:id="@+id/btn_take_off"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_start_simulator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Take Off" />
 
     <Button
         android:id="@+id/btn_land"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/directionJoystickLeft"
-        android:layout_alignStart="@+id/directionJoystickLeft"
-        android:layout_alignTop="@+id/btn_take_off"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_take_off"
+        android:layout_marginTop="20dp"
         android:text="Land" />
+
+    <Button
+        android:id="@+id/btn_force_land"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_land"
+        android:layout_marginTop="20dp"
+        android:text="Force Land" />
+
 
     <com.example.nermi.djidronepilot.OnScreenJoystick
         android:id="@+id/directionJoystickRight"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:background="@mipmap/joystick_bg"/>
 
     <com.example.nermi.djidronepilot.OnScreenJoystick
         android:id="@+id/directionJoystickLeft"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@mipmap/joystick_bg"/>
 
 </RelativeLayout>
