@@ -521,44 +521,47 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void onClickSimulator(boolean isChecked){
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            mFlightController = aircraft.getFlightController();
-            if (mFlightController != null) {
-                simulator = mFlightController.getSimulator();
-            }
-        }
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
 
-        if(simulator == null)
-            return;
-
-        if(isChecked){
-            mTextView.setVisibility(View.VISIBLE);
-            simulator.start(InitializationData.createInstance(new LocationCoordinate2D(23, 113),10, 10),
-                    new CommonCallbacks.CompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            } else {
-                                showToast("Start Simulator Success");
-                            }
-                        }
-                    });
-        }else {
-            mTextView.setVisibility(View.INVISIBLE);
-            simulator.stop(new CommonCallbacks.CompletionCallback() {
-                @Override
-                public void onResult(DJIError djiError) {
-                    if (djiError != null) {
-                        showToast(djiError.getDescription());
-                    }else
-                    {
-                        showToast("Stop Simulator Success");
-                    }
-                }
-            });
-        }
+//        Aircraft aircraft = DJIApplication.getAircraftInstance();
+//        if (aircraft != null) {
+//            mFlightController = aircraft.getFlightController();
+//            if (mFlightController != null) {
+//                simulator = mFlightController.getSimulator();
+//            }
+//        }
+//
+//        if(simulator == null)
+//            return;
+//
+//        if(isChecked){
+//            mTextView.setVisibility(View.VISIBLE);
+//            simulator.start(InitializationData.createInstance(new LocationCoordinate2D(23, 113),10, 10),
+//                    new CommonCallbacks.CompletionCallback() {
+//                        @Override
+//                        public void onResult(DJIError djiError) {
+//                            if (djiError != null) {
+//                                showToast(djiError.getDescription());
+//                            } else {
+//                                showToast("Start Simulator Success");
+//                            }
+//                        }
+//                    });
+//        }else {
+//            mTextView.setVisibility(View.INVISIBLE);
+//            simulator.stop(new CommonCallbacks.CompletionCallback() {
+//                @Override
+//                public void onResult(DJIError djiError) {
+//                    if (djiError != null) {
+//                        showToast(djiError.getDescription());
+//                    }else
+//                    {
+//                        showToast("Stop Simulator Success");
+//                    }
+//                }
+//            });
+//        }
     }
 
 }
