@@ -42,6 +42,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -53,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +64,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Camera2Fragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-
+    private Activity mActivity;
+    private Random r = new Random();
+    private TextView tv;
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
@@ -260,6 +264,15 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
             switch (mState) {
                 case STATE_PREVIEW: {
                     // We have nothing to do when the camera preview is working normally.
+                    if (mActivity != null) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv.setText(String.valueOf(r.nextInt(100)));
+                            }
+                        });
+                    }
+
                     break;
                 }
                 case STATE_WAITING_LOCK: {
@@ -397,11 +410,13 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        tv = (TextView) view.findViewById(R.id.simpleText);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mActivity = getActivity();
     }
 
     @Override
