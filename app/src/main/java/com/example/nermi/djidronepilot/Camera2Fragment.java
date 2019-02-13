@@ -541,7 +541,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                             mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 } else {
                     mTextureView.setAspectRatio(
-                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
+                            1, 1);
                 }
 
                 // Check if the flash is supported.
