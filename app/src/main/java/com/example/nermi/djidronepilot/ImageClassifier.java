@@ -102,7 +102,8 @@ public abstract class ImageClassifier {
         applyFilter();
 
         // Print the results.
-        printTopKLabels(builder);
+
+        //printTopKLabels(builder);
         long duration = endTime - startTime;
         SpannableString span = new SpannableString(duration + " ms");
         span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
@@ -206,36 +207,36 @@ public abstract class ImageClassifier {
     }
 
     /** Prints top-K labels, to be shown in UI as the results. */
-    private void printTopKLabels(SpannableStringBuilder builder) {
-        for (int i = 0; i < getNumLabels(); ++i) {
-            sortedLabels.add(
-                    new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
-            if (sortedLabels.size() > RESULTS_TO_SHOW) {
-                sortedLabels.poll();
-            }
-        }
-
-        final int size = sortedLabels.size();
-        for (int i = 0; i < size; i++) {
-            Map.Entry<String, Float> label = sortedLabels.poll();
-            SpannableString span =
-                    new SpannableString(String.format("%s: %4.2f\n", label.getKey(), label.getValue()));
-            int color;
-            // Make it white when probability larger than threshold.
-            if (label.getValue() > GOOD_PROB_THRESHOLD) {
-                color = android.graphics.Color.WHITE;
-            } else {
-                color = SMALL_COLOR;
-            }
-            // Make first item bigger.
-            if (i == size - 1) {
-                float sizeScale = (i == size - 1) ? 1.25f : 0.8f;
-                span.setSpan(new RelativeSizeSpan(sizeScale), 0, span.length(), 0);
-            }
-            span.setSpan(new ForegroundColorSpan(color), 0, span.length(), 0);
-            builder.insert(0, span);
-        }
-    }
+//    private void printTopKLabels(SpannableStringBuilder builder) {
+//        for (int i = 0; i < getNumLabels(); ++i) {
+//            sortedLabels.add(
+//                    new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
+//            if (sortedLabels.size() > RESULTS_TO_SHOW) {
+//                sortedLabels.poll();
+//            }
+//        }
+//
+//        final int size = sortedLabels.size();
+//        for (int i = 0; i < size; i++) {
+//            Map.Entry<String, Float> label = sortedLabels.poll();
+//            SpannableString span =
+//                    new SpannableString(String.format("%s: %4.2f\n", label.getKey(), label.getValue()));
+//            int color;
+//            // Make it white when probability larger than threshold.
+//            if (label.getValue() > GOOD_PROB_THRESHOLD) {
+//                color = android.graphics.Color.WHITE;
+//            } else {
+//                color = SMALL_COLOR;
+//            }
+//            // Make first item bigger.
+//            if (i == size - 1) {
+//                float sizeScale = (i == size - 1) ? 1.25f : 0.8f;
+//                span.setSpan(new RelativeSizeSpan(sizeScale), 0, span.length(), 0);
+//            }
+//            span.setSpan(new ForegroundColorSpan(color), 0, span.length(), 0);
+//            builder.insert(0, span);
+//        }
+//    }
 
     /**
      * Get the name of the model file stored in Assets.
