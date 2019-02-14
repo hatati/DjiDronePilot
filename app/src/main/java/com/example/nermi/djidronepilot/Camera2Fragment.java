@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -34,6 +35,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -42,6 +44,10 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,49 +73,22 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private Activity mActivity;
     private Random r = new Random();
     private TextView tv;
-    /**
-     * Conversion from screen rotation to JPEG orientation.
-     */
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    private final Object lock = new Object();
+    private boolean runClassifier = false;
+    private boolean checkedPermissions = false;
+    private TextView textView;
+    private NumberPicker np;
+    private ImageClassifier classifier;
+    private ListView deviceView;
+    private ListView modelView;
+
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
 
     /**
      * Tag for the {@link Log}.
      */
     private static final String TAG = "Camera2Fragment";
-
-    /**
-     * Camera state: Showing camera preview.
-     */
-    private static final int STATE_PREVIEW = 0;
-
-    /**
-     * Camera state: Waiting for the focus to be locked.
-     */
-    private static final int STATE_WAITING_LOCK = 1;
-
-    /**
-     * Camera state: Waiting for the exposure to be precapture state.
-     */
-    private static final int STATE_WAITING_PRECAPTURE = 2;
-
-    /**
-     * Camera state: Waiting for the exposure state to be something other than precapture.
-     */
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3;
-
-    /**
-     * Camera state: Picture was taken.
-     */
-    private static final int STATE_PICTURE_TAKEN = 4;
 
     /**
      * Max preview width that is guaranteed by Camera2 API
@@ -148,6 +127,13 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         }
 
     };
+
+    // Model parameter constants.
+    private String gpu;
+    private String cpu;
+    private String nnApi;
+    private String mobilenetV1Quant;
+    private String mobilenetV1Float;
 
     /**
      * ID of the current {@link CameraDevice}.
@@ -207,6 +193,14 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     };
 
+    private ArrayList<String> deviceStrings = new ArrayList<String>();
+    private ArrayList<String> modelStrings = new ArrayList<String>();
+
+    /** Current indices of device and model. */
+    int currentDevice = -1;
+
+    int currentModel = -1;
+
     /**
      * An additional thread for running tasks that shouldn't block the UI.
      */
@@ -232,24 +226,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
      */
     private CaptureRequest mPreviewRequest;
 
-    /**
-     * The current state of camera state for taking pictures.
-     *
-     * @see #mCaptureCallback
-     */
-    private int mState = STATE_PREVIEW;
-
-    /**
+        /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
-    /**
-     * Whether the current camera device supports Flash or not.
-     */
-    private boolean mFlashSupported;
-
-    /**
+        /**
      * Orientation of the camera sensor
      */
     private int mSensorOrientation;
@@ -260,75 +242,15 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private CameraCaptureSession.CaptureCallback mCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
 
-        private void process(CaptureResult result) {
-            switch (mState) {
-                case STATE_PREVIEW: {
-                    // We have nothing to do when the camera preview is working normally.
-                    if (mActivity != null) {
-                        mActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tv.setText(String.valueOf(r.nextInt(100)));
-                            }
-                        });
-                    }
-
-                    break;
-                }
-                case STATE_WAITING_LOCK: {
-                    Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == null) {
-                        captureStillPicture();
-                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
-                            CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
-                        // CONTROL_AE_STATE can be null on some devices
-                        Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-                        if (aeState == null ||
-                                aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-                            mState = STATE_PICTURE_TAKEN;
-                            captureStillPicture();
-                        } else {
-                            runPrecaptureSequence();
-                        }
-                    }
-                    break;
-                }
-                case STATE_WAITING_PRECAPTURE: {
-                    // CONTROL_AE_STATE can be null on some devices
-                    Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-                    if (aeState == null ||
-                            aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE ||
-                            aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                        mState = STATE_WAITING_NON_PRECAPTURE;
-                    }
-                    break;
-                }
-                case STATE_WAITING_NON_PRECAPTURE: {
-                    // CONTROL_AE_STATE can be null on some devices
-                    Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-                    if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-                        mState = STATE_PICTURE_TAKEN;
-                        captureStillPicture();
-                    }
-                    break;
-                }
-            }
-        }
-
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session,
                                         @NonNull CaptureRequest request,
-                                        @NonNull CaptureResult partialResult) {
-            process(partialResult);
-        }
+                                        @NonNull CaptureResult partialResult) {}
 
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
-                                       @NonNull TotalCaptureResult result) {
-            process(result);
-        }
-
+                                       @NonNull TotalCaptureResult result) {}
     };
 
     /**
@@ -407,15 +329,119 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         return inflater.inflate(R.layout.fragment_camera2, container, false);
     }
 
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        tv = (TextView) view.findViewById(R.id.simpleText);
+    private void updateActiveModel() {
+        // Get UI information before delegating to background
+        final int modelIndex = modelView.getCheckedItemPosition();
+        final int deviceIndex = deviceView.getCheckedItemPosition();
+
+        backgroundHandler.post(() -> {
+            if (modelIndex == currentModel && deviceIndex == currentDevice) {
+                return;
+            }
+            currentModel = modelIndex;
+            currentDevice = deviceIndex;
+
+            // Disable classifier while updating
+            if (classifier != null) {
+                classifier.close();
+                classifier = null;
+            }
+
+            // Lookup names of parameters.
+            String model = modelStrings.get(modelIndex);
+            String device = deviceStrings.get(deviceIndex);
+
+            Log.i(TAG, "Changing model to " + model + " device " + device);
+
+            // Try to load model.
+            try {
+                if (model.equals(mobilenetV1Quant)) {
+                    classifier = new ImageClassifierQuantizedMobileNet(getActivity());
+                } else if (model.equals(mobilenetV1Float)) {
+                    classifier = new ImageClassifierFloatMobileNet(getActivity());
+                } else {
+                    showToast("Failed to load model");
+                }
+            } catch (IOException e) {
+                Log.d(TAG, "Failed to load", e);
+                classifier = null;
+            }
+
+            // Customzie the interpreter to the type of device we want to use.
+            if (device.equals(cpu)) {
+            } else if (device.equals(gpu)) {
+                if (!GpuDelegateHelper.isGpuDelegateAvailable()) {
+                    showToast("gpu not in this build.");
+                    classifier = null;
+                } else if (model.equals(mobilenetV1Quant)) {
+                    showToast("gpu requires float model.");
+                    classifier = null;
+                } else {
+                    classifier.useGpu();
+                }
+            } else if (device.equals(nnApi)) {
+                classifier.useNNAPI();
+            }
+        });
     }
 
     @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        gpu = getString(R.string.gpu);
+        cpu = getString(R.string.cpu);
+        nnApi = getString(R.string.nnapi);
+        mobilenetV1Quant = getString(R.string.mobilenetV1Quant);
+        mobilenetV1Float = getString(R.string.mobilenetV1Float);
+
+        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        tv = (TextView) view.findViewById(R.id.simpleText);
+
+        // Build list of models
+        modelStrings.add(mobilenetV1Quant);
+        modelStrings.add(mobilenetV1Float);
+
+        // Build list of devices
+        int defaultModelIndex = 0;
+        deviceStrings.add(cpu);
+        if (GpuDelegateHelper.isGpuDelegateAvailable()) {
+            deviceStrings.add(gpu);
+        }
+        deviceStrings.add(nnApi);
+
+        deviceView.setAdapter(
+                new ArrayAdapter<String>(
+                        getContext(), R.layout.listview_row, R.id.listview_row_text, deviceStrings));
+        deviceView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        deviceView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        updateActiveModel();
+                    }
+                });
+        deviceView.setItemChecked(0, true);
+
+
+        np = (NumberPicker) view.findViewById(R.id.np);
+        np.setMinValue(1);
+        np.setMaxValue(10);
+        np.setWrapSelectorWheel(true);
+        np.setOnValueChangedListener(
+                new NumberPicker.OnValueChangeListener() {
+                    @Override
+                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                        backgroundHandler.post(() -> classifier.setNumThreads(newVal));
+                    }
+                });
+
+        // Start initial model.
+    }
+
+    /** Load the model and labels. */
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        startBackgroundThread();
         mActivity = getActivity();
     }
 
@@ -440,6 +466,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         closeCamera();
         stopBackgroundThread();
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        classifier.close();
+        super.onDestroy();
     }
 
     private void requestCameraPermission() {
@@ -559,10 +591,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                             1, 1);
                 }
 
-                // Check if the flash is supported.
-                Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                mFlashSupported = available == null ? false : available;
-
                 mCameraId = cameraId;
                 return;
             }
@@ -633,6 +661,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+        // Start the classification train & load an initial model.
+        synchronized (lock) {
+            runClassifier = true;
+        }
+        mBackgroundHandler.post(periodicClassify);
+        updateActiveModel();
     }
 
     /**
@@ -644,6 +678,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
             mBackgroundThread.join();
             mBackgroundThread = null;
             mBackgroundHandler = null;
+            synchronized (lock) {
+                runClassifier = false;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -685,8 +722,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                 // Auto focus should be continuous for camera preview.
                                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                // Flash is automatically enabled when necessary.
-                                setAutoFlash(mPreviewRequestBuilder);
 
                                 // Finally, we start displaying the camera preview.
                                 mPreviewRequest = mPreviewRequestBuilder.build();
@@ -742,132 +777,17 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         mTextureView.setTransform(matrix);
     }
 
-    /**
-     * Initiate a still image capture.
-     */
-    private void takePicture() {
-        lockFocus();
-    }
-
-    /**
-     * Lock the focus as the first step for a still image capture.
-     */
-    private void lockFocus() {
-        try {
-            // This is how to tell the camera to lock focus.
-            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_START);
-            // Tell #mCaptureCallback to wait for the lock.
-            mState = STATE_WAITING_LOCK;
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
-                    mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+    /** Classifies a frame from the preview stream. */
+    private void classifyFrame() {
+        if (classifier == null || getActivity() == null || cameraDevice == null) {
+            showToast("Uninitialized Classifier or invalid context.");
+            return;
         }
-    }
-
-    /**
-     * Run the precapture sequence for capturing a still image. This method should be called when
-     * we get a response in {@link #mCaptureCallback} from {@link #lockFocus()}.
-     */
-    private void runPrecaptureSequence() {
-        try {
-            // This is how to tell the camera to trigger.
-            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-            // Tell #mCaptureCallback to wait for the precapture sequence to be set.
-            mState = STATE_WAITING_PRECAPTURE;
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
-                    mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Capture a still picture. This method should be called when we get a response in
-     * {@link #mCaptureCallback} from both {@link #lockFocus()}.
-     */
-    private void captureStillPicture() {
-        try {
-            final Activity activity = getActivity();
-            if (null == activity || null == mCameraDevice) {
-                return;
-            }
-            // This is the CaptureRequest.Builder that we use to take a picture.
-            final CaptureRequest.Builder captureBuilder =
-                    mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(mImageReader.getSurface());
-
-            // Use the same AE and AF modes as the preview.
-            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            setAutoFlash(captureBuilder);
-
-            // Orientation
-            int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
-
-            CameraCaptureSession.CaptureCallback CaptureCallback
-                    = new CameraCaptureSession.CaptureCallback() {
-
-                @Override
-                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
-                                               @NonNull CaptureRequest request,
-                                               @NonNull TotalCaptureResult result) {
-                    unlockFocus();
-                }
-            };
-
-            mCaptureSession.stopRepeating();
-            mCaptureSession.abortCaptures();
-            mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Retrieves the JPEG orientation from the specified screen rotation.
-     *
-     * @param rotation The screen rotation.
-     * @return The JPEG orientation (one of 0, 90, 270, and 360)
-     */
-    private int getOrientation(int rotation) {
-        // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X)
-        // We have to take that into account and rotate JPEG properly.
-        // For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
-        // For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
-        return (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360;
-    }
-
-    /**
-     * Unlock the focus. This method should be called when still image capture sequence is
-     * finished.
-     */
-    private void unlockFocus() {
-        try {
-            // Reset the auto-focus trigger
-            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            setAutoFlash(mPreviewRequestBuilder);
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
-                    mBackgroundHandler);
-            // After this, the camera will go back to the normal state of preview.
-            mState = STATE_PREVIEW;
-            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
-                    mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
-        if (mFlashSupported) {
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-        }
+        SpannableStringBuilder textToShow = new SpannableStringBuilder();
+        Bitmap bitmap = mTextureView.getBitmap(classifier.getImageSizeX(), classifier.getImageSizeY());
+        classifier.classifyFrame(bitmap, textToShow);
+        bitmap.recycle();
+        showToast(textToShow);
     }
 
     /**
