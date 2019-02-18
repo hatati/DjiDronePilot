@@ -27,7 +27,7 @@ public class ImageClassifierForwardeftRightCNN extends ImageClassifier {
         // you can download this file from
         // see build.gradle for where to obtain this file. It should be auto
         // downloaded into assets.
-        return "forward-left-right-CNN.tflite";
+        return "forward-left-right-CNN-RGB.tflite";
     }
 
     @Override
@@ -37,12 +37,12 @@ public class ImageClassifierForwardeftRightCNN extends ImageClassifier {
 
     @Override
     protected int getImageSizeX() {
-        return 60;
+        return 70;
     }
 
     @Override
     protected int getImageSizeY() {
-        return 60;
+        return 70;
     }
 
     @Override
@@ -68,6 +68,7 @@ public class ImageClassifierForwardeftRightCNN extends ImageClassifier {
     }
 
     @Override
+
     protected float getNormalizedProbability(int labelIndex) {
         return labelProbArray[0][labelIndex];
     }
