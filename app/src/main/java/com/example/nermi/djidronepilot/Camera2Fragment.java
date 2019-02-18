@@ -35,6 +35,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.util.Size;
@@ -70,17 +71,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class Camera2Fragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private Activity mActivity;
-    private Random r = new Random();
-    private TextView tv;
     private final Object lock = new Object();
     private boolean runClassifier = false;
-    private boolean checkedPermissions = false;
-    private TextView textView;
-    private NumberPicker np;
     private ImageClassifier classifier;
-    private ListView deviceView;
-    private ListView modelView;
+
+    private TextView textView;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -127,13 +122,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         }
 
     };
-
-    // Model parameter constants.
-    private String gpu;
-    private String cpu;
-    private String nnApi;
-    private String mobilenetV1Quant;
-    private String mobilenetV1Float;
 
     /**
      * ID of the current {@link CameraDevice}.
@@ -193,14 +181,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     };
 
-    private ArrayList<String> deviceStrings = new ArrayList<String>();
-    private ArrayList<String> modelStrings = new ArrayList<String>();
-
-    /** Current indices of device and model. */
-    int currentDevice = -1;
-
-    int currentModel = -1;
-
     /**
      * An additional thread for running tasks that shouldn't block the UI.
      */
@@ -258,15 +238,24 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
      *
      * @param text The message to show
      */
-    private void showToast(final String text) {
+
+    private void showToast(String s) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        SpannableString str1 = new SpannableString(s);
+        builder.append(str1);
+        showToast(builder);
+    }
+
+    private void showToast(SpannableStringBuilder builder) {
         final Activity activity = getActivity();
         if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-                }
-            });
+            activity.runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            textView.setText(builder, TextView.BufferType.SPANNABLE);
+                        }
+                    });
         }
     }
 
@@ -329,17 +318,10 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         return inflater.inflate(R.layout.fragment_camera2, container, false);
     }
 
-    private void updateActiveModel() {
+    private void loadModel() {
         // Get UI information before delegating to background
-        final int modelIndex = modelView.getCheckedItemPosition();
-        final int deviceIndex = deviceView.getCheckedItemPosition();
 
-        backgroundHandler.post(() -> {
-            if (modelIndex == currentModel && deviceIndex == currentDevice) {
-                return;
-            }
-            currentModel = modelIndex;
-            currentDevice = deviceIndex;
+        mBackgroundHandler.post(() -> {
 
             // Disable classifier while updating
             if (classifier != null) {
@@ -347,92 +329,25 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                 classifier = null;
             }
 
-            // Lookup names of parameters.
-            String model = modelStrings.get(modelIndex);
-            String device = deviceStrings.get(deviceIndex);
-
-            Log.i(TAG, "Changing model to " + model + " device " + device);
-
             // Try to load model.
             try {
-                if (model.equals(mobilenetV1Quant)) {
-                    classifier = new ImageClassifierQuantizedMobileNet(getActivity());
-                } else if (model.equals(mobilenetV1Float)) {
-                    classifier = new ImageClassifierFloatMobileNet(getActivity());
-                } else {
-                    showToast("Failed to load model");
-                }
+                classifier = new ImageClassifierForwardeftRightCNN(getActivity());
+
             } catch (IOException e) {
                 Log.d(TAG, "Failed to load", e);
                 classifier = null;
             }
 
-            // Customzie the interpreter to the type of device we want to use.
-            if (device.equals(cpu)) {
-            } else if (device.equals(gpu)) {
-                if (!GpuDelegateHelper.isGpuDelegateAvailable()) {
-                    showToast("gpu not in this build.");
-                    classifier = null;
-                } else if (model.equals(mobilenetV1Quant)) {
-                    showToast("gpu requires float model.");
-                    classifier = null;
-                } else {
-                    classifier.useGpu();
-                }
-            } else if (device.equals(nnApi)) {
-                classifier.useNNAPI();
-            }
         });
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        gpu = getString(R.string.gpu);
-        cpu = getString(R.string.cpu);
-        nnApi = getString(R.string.nnapi);
-        mobilenetV1Quant = getString(R.string.mobilenetV1Quant);
-        mobilenetV1Float = getString(R.string.mobilenetV1Float);
+        startBackgroundThread();
 
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        tv = (TextView) view.findViewById(R.id.simpleText);
-
-        // Build list of models
-        modelStrings.add(mobilenetV1Quant);
-        modelStrings.add(mobilenetV1Float);
-
-        // Build list of devices
-        int defaultModelIndex = 0;
-        deviceStrings.add(cpu);
-        if (GpuDelegateHelper.isGpuDelegateAvailable()) {
-            deviceStrings.add(gpu);
-        }
-        deviceStrings.add(nnApi);
-
-        deviceView.setAdapter(
-                new ArrayAdapter<String>(
-                        getContext(), R.layout.listview_row, R.id.listview_row_text, deviceStrings));
-        deviceView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        deviceView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        updateActiveModel();
-                    }
-                });
-        deviceView.setItemChecked(0, true);
-
-
-        np = (NumberPicker) view.findViewById(R.id.np);
-        np.setMinValue(1);
-        np.setMaxValue(10);
-        np.setWrapSelectorWheel(true);
-        np.setOnValueChangedListener(
-                new NumberPicker.OnValueChangeListener() {
-                    @Override
-                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                        backgroundHandler.post(() -> classifier.setNumThreads(newVal));
-                    }
-                });
+        textView = (TextView) view.findViewById(R.id.simpleText);
+        loadModel();
 
         // Start initial model.
     }
@@ -441,8 +356,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        startBackgroundThread();
-        mActivity = getActivity();
     }
 
     @Override
@@ -666,7 +579,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
             runClassifier = true;
         }
         mBackgroundHandler.post(periodicClassify);
-        updateActiveModel();
+        loadModel();
     }
 
     /**
@@ -685,6 +598,20 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
             e.printStackTrace();
         }
     }
+
+    /** Takes photos and classify them periodically. */
+    private Runnable periodicClassify =
+            new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (lock) {
+                        if (runClassifier) {
+                            classifyFrame();
+                        }
+                    }
+                    mBackgroundHandler.post(periodicClassify);
+                }
+            };
 
     /**
      * Creates a new {@link CameraCaptureSession} for camera preview.
@@ -779,7 +706,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     /** Classifies a frame from the preview stream. */
     private void classifyFrame() {
-        if (classifier == null || getActivity() == null || cameraDevice == null) {
+        if (classifier == null || getActivity() == null || mCameraDevice == null) {
             showToast("Uninitialized Classifier or invalid context.");
             return;
         }
@@ -787,7 +714,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         Bitmap bitmap = mTextureView.getBitmap(classifier.getImageSizeX(), classifier.getImageSizeY());
         classifier.classifyFrame(bitmap, textToShow);
         bitmap.recycle();
-        showToast(textToShow);
+        showToast(textToShow.toString());
     }
 
     /**
