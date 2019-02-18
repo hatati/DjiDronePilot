@@ -65,6 +65,9 @@ import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import dji.sdk.mobilerc.MobileRemoteController;
+import dji.sdk.products.Aircraft;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -76,6 +79,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private ImageClassifier classifier;
 
     private TextView textView;
+    private OnScreenJoystick mScreenJoystickRight;
+    private OnScreenJoystick mScreenJoystickLeft;
+    private MobileRemoteController mMobileRemoteController;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -236,7 +242,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     /**
      * Shows a {@link Toast} on the UI thread.
      *
-     * @param text The message to show
+     * @param s The message to show
      */
 
     private void showToast(String s) {
@@ -254,6 +260,11 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                         @Override
                         public void run() {
                             textView.setText(builder, TextView.BufferType.SPANNABLE);
+                            Random r = new Random();
+//                            mMobileRemoteController.setLeftStickHorizontal(r.nextFloat());
+//                            mMobileRemoteController.setLeftStickVertical(r.nextFloat());
+//                            mMobileRemoteController.setRightStickHorizontal(r.nextFloat());
+//                            mMobileRemoteController.setRightStickVertical(r.nextFloat());
                         }
                     });
         }
@@ -347,6 +358,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         textView = (TextView) view.findViewById(R.id.simpleText);
+        initVirtualSticks(view);
         loadModel();
 
         // Start initial model.
@@ -362,6 +374,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onResume() {
         super.onResume();
         startBackgroundThread();
+        setupListeners();
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -376,6 +389,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     @Override
     public void onPause() {
+        tearDownListeners();
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -793,6 +807,75 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                             })
                     .create();
         }
+    }
+
+
+    /*
+    Create listeners for Virtual Sticks
+     */
+    private void initVirtualSticks(View view){
+        mScreenJoystickRight = (OnScreenJoystick)view.findViewById(R.id.directionJoystickRight);
+        mScreenJoystickLeft = (OnScreenJoystick)view.findViewById(R.id.directionJoystickLeft);
+    }
+
+    private void setupListeners(){
+        try {
+            mMobileRemoteController =
+                    ((Aircraft) DJIApplication.getAircraftInstance()).getMobileRemoteController();
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+
+//        if (mMobileRemoteController != null) {
+////            mTextView.setText(mTextView.getText() + "\n" + "Mobile Connected");
+////        } else {
+////            mTextView.setText(mTextView.getText() + "\n" + "Mobile Disconnected");
+////        }
+
+        mScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
+            @Override
+            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
+                if (Math.abs(pX) < 0.02) {
+                    pX = 0;
+                }
+
+                if (Math.abs(pY) < 0.02) {
+                    pY = 0;
+                }
+
+
+                if (mMobileRemoteController != null) {
+                    mMobileRemoteController.setLeftStickHorizontal(pX);
+                    mMobileRemoteController.setLeftStickVertical(pY);
+                }
+
+            }
+        });
+
+        mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
+            @Override
+            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
+                if (Math.abs(pX) < 0.02) {
+                    pX = 0;
+                }
+
+                if (Math.abs(pY) < 0.02) {
+                    pY = 0;
+                }
+                if (mMobileRemoteController != null) {
+                    mMobileRemoteController.setRightStickHorizontal(pX);
+                    mMobileRemoteController.setRightStickVertical(pY);
+                }
+            }
+        });
+
+    }
+
+    private void tearDownListeners() {
+       // Aircraft aircraft = DJIApplication.getAircraftInstance();
+
+        mScreenJoystickLeft.setJoystickListener(null);
+        mScreenJoystickRight.setJoystickListener(null);
     }
 
 }
