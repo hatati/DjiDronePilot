@@ -84,7 +84,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
-    private MobileRemoteController mMobileRemoteController;
+
     // Provides dedicated access to Flight controller attributes.
     private FlightControllerKey isSimulatorActived;
     private FlightController mFlightController;
@@ -97,9 +97,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mBtnForceLand;
 
     private TextView mTextView;
-
-    private OnScreenJoystick mScreenJoystickRight;
-    private OnScreenJoystick mScreenJoystickLeft;
 
     private float mPitch;
     private float mRoll;
@@ -328,8 +325,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
         mTextView = (TextView) findViewById(R.id.textview_simulator);
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
-        mScreenJoystickRight = (OnScreenJoystick)findViewById(R.id.directionJoystickRight);
-        mScreenJoystickLeft = (OnScreenJoystick)findViewById(R.id.directionJoystickLeft);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
@@ -389,55 +384,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             showToast("Disconnected");
         }
 
-        try {
-            mMobileRemoteController =
-                    ((Aircraft) DJIApplication.getAircraftInstance()).getMobileRemoteController();
-        }catch (Exception exception){
-            exception.printStackTrace();
-        }
-
-        if (mMobileRemoteController != null) {
-            mTextView.setText(mTextView.getText() + "\n" + "Mobile Connected");
-        } else {
-            mTextView.setText(mTextView.getText() + "\n" + "Mobile Disconnected");
-        }
-
-        mScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
-            @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-                if (Math.abs(pX) < 0.02) {
-                    pX = 0;
-                }
-
-                if (Math.abs(pY) < 0.02) {
-                    pY = 0;
-                }
-
-
-                if (mMobileRemoteController != null) {
-                    mMobileRemoteController.setLeftStickHorizontal(pX);
-                    mMobileRemoteController.setLeftStickVertical(pY);
-                }
-
-            }
-        });
-
-        mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
-            @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-                if (Math.abs(pX) < 0.02) {
-                    pX = 0;
-                }
-
-                if (Math.abs(pY) < 0.02) {
-                    pY = 0;
-                }
-                if (mMobileRemoteController != null) {
-                    mMobileRemoteController.setRightStickHorizontal(pX);
-                    mMobileRemoteController.setRightStickVertical(pY);
-                }
-            }
-        });
     }
 
     private void tearDownListeners() {
@@ -452,8 +398,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (simulator != null) {
             simulator.setStateCallback(null);
         }
-        mScreenJoystickLeft.setJoystickListener(null);
-        mScreenJoystickRight.setJoystickListener(null);
     }
 
     @Override
