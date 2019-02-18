@@ -9,6 +9,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -37,7 +38,7 @@ public abstract class ImageClassifier {
     private static final String TAG = "DJIDronePilot";
 
     /** Number of results to show in the UI. */
-    //private static final int RESULTS_TO_SHOW = 3;
+    private static final int RESULTS_TO_SHOW = 3;
 
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
@@ -68,6 +69,16 @@ public abstract class ImageClassifier {
     private static final int FILTER_STAGES = 3;
     private static final float FILTER_FACTOR = 0.4f;
 
+    private PriorityQueue<Map.Entry<String, Float>> sortedLabels =
+            new PriorityQueue<>(
+                    RESULTS_TO_SHOW,
+                    new Comparator<Map.Entry<String, Float>>() {
+                        @Override
+                        public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
+                            return (o1.getValue()).compareTo(o2.getValue());
+                        }
+                    });
+
     /** Initializes an {@code ImageClassifier}. */
     ImageClassifier(Activity activity) throws IOException {
         tfliteModel = loadModelFile(activity);
@@ -96,14 +107,14 @@ public abstract class ImageClassifier {
         long startTime = SystemClock.uptimeMillis();
         runInference();
         long endTime = SystemClock.uptimeMillis();
-        Log.d(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
+        Log.e(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
 
         // Smooth the results across frames.
         applyFilter();
 
         // Print the results.
 
-        //printTopKLabels(builder);
+        printTopKLabels(builder);
         long duration = endTime - startTime;
         SpannableString span = new SpannableString(duration + " ms");
         span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
@@ -207,36 +218,36 @@ public abstract class ImageClassifier {
     }
 
     /** Prints top-K labels, to be shown in UI as the results. */
-//    private void printTopKLabels(SpannableStringBuilder builder) {
-//        for (int i = 0; i < getNumLabels(); ++i) {
-//            sortedLabels.add(
-//                    new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
-//            if (sortedLabels.size() > RESULTS_TO_SHOW) {
-//                sortedLabels.poll();
-//            }
-//        }
-//
-//        final int size = sortedLabels.size();
-//        for (int i = 0; i < size; i++) {
-//            Map.Entry<String, Float> label = sortedLabels.poll();
-//            SpannableString span =
-//                    new SpannableString(String.format("%s: %4.2f\n", label.getKey(), label.getValue()));
-//            int color;
-//            // Make it white when probability larger than threshold.
-//            if (label.getValue() > GOOD_PROB_THRESHOLD) {
-//                color = android.graphics.Color.WHITE;
-//            } else {
-//                color = SMALL_COLOR;
-//            }
-//            // Make first item bigger.
-//            if (i == size - 1) {
-//                float sizeScale = (i == size - 1) ? 1.25f : 0.8f;
-//                span.setSpan(new RelativeSizeSpan(sizeScale), 0, span.length(), 0);
-//            }
-//            span.setSpan(new ForegroundColorSpan(color), 0, span.length(), 0);
-//            builder.insert(0, span);
-//        }
-//    }
+    private void printTopKLabels(SpannableStringBuilder builder) {
+        for (int i = 0; i < getNumLabels(); ++i) {
+            sortedLabels.add(
+                    new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
+            if (sortedLabels.size() > RESULTS_TO_SHOW) {
+                sortedLabels.poll();
+            }
+        }
+
+        final int size = sortedLabels.size();
+        for (int i = 0; i < size; i++) {
+            Map.Entry<String, Float> label = sortedLabels.poll();
+            SpannableString span =
+                    new SpannableString(String.format("%s: %4.2f\n", label.getKey(), label.getValue()));
+            int color;
+            // Make it white when probability larger than threshold.
+            if (label.getValue() > GOOD_PROB_THRESHOLD) {
+                color = android.graphics.Color.WHITE;
+            } else {
+                color = SMALL_COLOR;
+            }
+            // Make first item bigger.
+            if (i == size - 1) {
+                float sizeScale = (i == size - 1) ? 1.25f : 0.8f;
+                span.setSpan(new RelativeSizeSpan(sizeScale), 0, span.length(), 0);
+            }
+            span.setSpan(new ForegroundColorSpan(color), 0, span.length(), 0);
+            builder.insert(0, span);
+        }
+    }
 
     /**
      * Get the name of the model file stored in Assets.
