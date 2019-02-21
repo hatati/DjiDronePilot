@@ -50,9 +50,9 @@
         android:layout_below="@+id/textview_simulator"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="Start Simulator"
-        android:textOff="Start Simulator"
-        android:textOn="Stop Simulator" />
+        android:text="@string/start_flight"
+        android:textOff="@string/start_flight"
+        android:textOn="@string/start_flight" />
 
     <Button
         android:id="@+id/btn_take_off"
