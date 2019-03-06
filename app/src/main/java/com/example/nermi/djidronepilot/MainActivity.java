@@ -41,6 +41,7 @@ import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.flightcontroller.Simulator;
+import dji.sdk.mobilerc.MobileRemoteController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.useraccount.UserAccountManager;
@@ -68,11 +69,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
+    private MobileRemoteController mMobileRemoteController;
 
-    // Provides dedicated access to Flight controller attributes.
-    private FlightControllerKey isSimulatorActived;
-    private FlightController mFlightController;
-    private Simulator simulator;
 
     protected TextView mConnectStatusTextView;
     private ToggleButton mBtnSimulator;
@@ -82,10 +80,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private TextView mTextView;
 
-    private float mPitch;
-    private float mRoll;
-    private float mYaw;
-    private float mThrottle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +88,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         checkAndRequestPermissions();
         setContentView(R.layout.activity_main);
 
-        initAllKeys();
         initUI();
 
         // Register the broadcast receiver for receiving the device connection's changes.
@@ -252,7 +246,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onResume();
         updateTitleBar();
         setupListeners();
-        loginAccount();
 
     }
 
@@ -281,26 +274,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onDestroy();
     }
 
-    private void loginAccount(){
-
-        UserAccountManager.getInstance().logIntoDJIUserAccount(this,
-                new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
-                    @Override
-                    public void onSuccess(final UserAccountState userAccountState) {
-                        Log.e(TAG, "Login Success");
-                    }
-                    @Override
-                    public void onFailure(DJIError error) {
-                        showToast("Login Error:"
-                                + error.getDescription());
-                    }
-                });
-    }
-
-    private void initAllKeys() {
-        isSimulatorActived = FlightControllerKey.create(FlightControllerKey.IS_SIMULATOR_ACTIVE);
-    }
-
     private void initUI() {
 
         mBtnTakeOff = (Button) findViewById(R.id.btn_take_off);
@@ -319,177 +292,98 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(buttonView == mBtnSimulator){
-                    onClickSimulator(isChecked);
+                    onClickSimulator();
                 }
             }
         });
-
-        try {
-            Boolean isSimulatorOn = (Boolean) KeyManager.getInstance().getValue(isSimulatorActived);
-
-            if(isSimulatorOn != null && isSimulatorOn){
-                mBtnSimulator.setChecked(true);
-                mTextView.setText("Simulator is On");
-            }
-        } catch (Exception ex){
-            ex.printStackTrace();
-        }
 
     }
 
     private void setupListeners(){
         Aircraft aircraft = DJIApplication.getAircraftInstance();
         if (aircraft != null) {
-            mFlightController = aircraft.getFlightController();
-            if (mFlightController != null) {
-                simulator = mFlightController.getSimulator();
-            }
+            mMobileRemoteController = aircraft.getMobileRemoteController();
         }
 
-        if(simulator != null){
-            simulator.setStateCallback(new SimulatorState.Callback() {
-                @Override
-                public void onUpdate(@NonNull final SimulatorState simulatorState) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTextView.setText(
-                                    "Yaw : " + simulatorState.getYaw() +
-                                    ", Pitch : " + simulatorState.getPitch() +
-                                    ", Roll : " + simulatorState.getRoll() + "\n" + ", " +
-                                    "PosX : " + simulatorState.getPositionX() +
-                                    ", PosY : " + simulatorState.getPositionY() +
-                                    ", PosZ : " + simulatorState.getPositionZ());
-                        }
-                    });
-                }
-            });
-        }else {
-            showToast("Disconnected");
-        }
 
     }
 
     private void tearDownListeners() {
         Aircraft aircraft = DJIApplication.getAircraftInstance();
         if (aircraft != null) {
-            mFlightController = aircraft.getFlightController();
-            if (mFlightController != null) {
-                simulator = mFlightController.getSimulator();
-            }
-        }
+            mMobileRemoteController = aircraft.getMobileRemoteController();
 
-        if (simulator != null) {
-            simulator.setStateCallback(null);
         }
     }
 
+    //TODO: FlightController here can possibly be used to override the mobile remote controller. Check up!
     @Override
     public void onClick(View v) {
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            mFlightController = aircraft.getFlightController();
-        }
-
-        if (mFlightController == null)
-            return;
-
-        switch (v.getId()) {
-            case R.id.btn_take_off:
-                mFlightController.startTakeoff(
-                        new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Take off Success");
-                                }
-                            }
-                        }
-                );
-
-                break;
-
-            case R.id.btn_land:
-                mFlightController.startLanding(
-                        new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Start Landing");
-                                }
-                            }
-                        }
-                );
-
-                break;
-
-            case R.id.btn_force_land:
-                mFlightController.confirmLanding(
-                        new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Force Landing Success");
-                                }
-                            }
-                        }
-                );
-
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private void onClickSimulator(boolean isChecked){
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
-
 //        Aircraft aircraft = DJIApplication.getAircraftInstance();
 //        if (aircraft != null) {
 //            mFlightController = aircraft.getFlightController();
-//            if (mFlightController != null) {
-//                simulator = mFlightController.getSimulator();
-//            }
 //        }
 //
-//        if(simulator == null)
+//        if (mFlightController == null)
 //            return;
 //
-//        if(isChecked){
-//            mTextView.setVisibility(View.VISIBLE);
-//            simulator.start(InitializationData.createInstance(new LocationCoordinate2D(23, 113),10, 10),
-//                    new CommonCallbacks.CompletionCallback() {
-//                        @Override
-//                        public void onResult(DJIError djiError) {
-//                            if (djiError != null) {
-//                                showToast(djiError.getDescription());
-//                            } else {
-//                                showToast("Start Simulator Success");
+//        switch (v.getId()) {
+//            case R.id.btn_take_off:
+//                mFlightController.startTakeoff(
+//                        new CommonCallbacks.CompletionCallback() {
+//                            @Override
+//                            public void onResult(DJIError djiError) {
+//                                if (djiError != null) {
+//                                    showToast(djiError.getDescription());
+//                                } else {
+//                                    showToast("Take off Success");
+//                                }
 //                            }
 //                        }
-//                    });
-//        }else {
-//            mTextView.setVisibility(View.INVISIBLE);
-//            simulator.stop(new CommonCallbacks.CompletionCallback() {
-//                @Override
-//                public void onResult(DJIError djiError) {
-//                    if (djiError != null) {
-//                        showToast(djiError.getDescription());
-//                    }else
-//                    {
-//                        showToast("Stop Simulator Success");
-//                    }
-//                }
-//            });
+//                );
+//
+//                break;
+//
+//            case R.id.btn_land:
+//                mFlightController.startLanding(
+//                        new CommonCallbacks.CompletionCallback() {
+//                            @Override
+//                            public void onResult(DJIError djiError) {
+//                                if (djiError != null) {
+//                                    showToast(djiError.getDescription());
+//                                } else {
+//                                    showToast("Start Landing");
+//                                }
+//                            }
+//                        }
+//                );
+//
+//                break;
+//
+//            case R.id.btn_force_land:
+//                mFlightController.confirmLanding(
+//                        new CommonCallbacks.CompletionCallback() {
+//                            @Override
+//                            public void onResult(DJIError djiError) {
+//                                if (djiError != null) {
+//                                    showToast(djiError.getDescription());
+//                                } else {
+//                                    showToast("Force Landing Success");
+//                                }
+//                            }
+//                        }
+//                );
+//
+//                break;
+//
+//            default:
+//                break;
 //        }
+    }
+
+    private void onClickSimulator(){
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
     }
 
 }
