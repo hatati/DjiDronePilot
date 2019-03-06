@@ -45,8 +45,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nermi.djilib.DJIApplication;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,9 +69,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private ImageClassifier classifier;
 
     private TextView textView;
-    private OnScreenJoystick mScreenJoystickRight;
-    private OnScreenJoystick mScreenJoystickLeft;
-    private MobileRemoteController mMobileRemoteController;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";

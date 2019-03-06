@@ -1,4 +1,4 @@
-package com.example.nermi.djilib;
+package com.example.nermi.djidronepilot;
 
 import android.app.Application;
 import android.content.Context;
