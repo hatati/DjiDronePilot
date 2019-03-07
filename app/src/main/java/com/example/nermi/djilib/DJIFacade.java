@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.nermi.djidronepilot.R;
 
@@ -22,6 +23,7 @@ public class DJIFacade {
 
     }
 
+    //TODO: Still needs testing on a real drones
     public void setupDJIMobileRemoteController(MobileRemoteController mobileRemoteController){
         mMobileRemoteController = mobileRemoteController;
     }
@@ -54,7 +56,67 @@ public class DJIFacade {
         return virtualSticks;
     }
 
+    /**
+     * Creates listeners for the the virtual sticks
+     * @param activity The activity containing the virtual sticks
+     */
+    public void setupVirtualSticksListeners(Activity activity){
+        if(mMobileRemoteController == null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
 
+            return;
+        }
+
+        assert onScreenJoystickLeft != null;
+        assert onScreenJoystickRight != null;
+
+        onScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
+            @Override
+            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
+                if (Math.abs(pX) < 0.02) {
+                    pX = 0;
+                }
+
+                if (Math.abs(pY) < 0.02) {
+                    pY = 0;
+                }
+
+
+                if (mMobileRemoteController != null) {
+                    mMobileRemoteController.setLeftStickHorizontal(pX);
+                    mMobileRemoteController.setLeftStickVertical(pY);
+                }
+
+            }
+        });
+
+        onScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
+            @Override
+            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
+                if (Math.abs(pX) < 0.02) {
+                    pX = 0;
+                }
+
+                if (Math.abs(pY) < 0.02) {
+                    pY = 0;
+                }
+
+
+                if (mMobileRemoteController != null) {
+                    mMobileRemoteController.setRightStickHorizontal(pX);
+                    mMobileRemoteController.setRightStickVertical(pY);
+                }
+            }
+        });
+
+
+    }
 
 
     public OnScreenJoystick getOnScreenJoystickRight() {
