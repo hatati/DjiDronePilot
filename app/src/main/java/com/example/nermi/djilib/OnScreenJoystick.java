@@ -1,4 +1,4 @@
-package com.example.nermi.djidronepilot;
+package com.example.nermi.djilib;
 /*
  * Copyright (c) 2014 Ville Saarinen
 
@@ -35,6 +35,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
+import com.example.nermi.djidronepilot.R;
 
 
 public class OnScreenJoystick extends SurfaceView implements

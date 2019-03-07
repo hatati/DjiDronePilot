@@ -1,4 +1,4 @@
-package com.example.nermi.djidronepilot;
+package com.example.nermi.djilib;
 
 /*
  * Copyright (c) 2014 Ville Saarinen
