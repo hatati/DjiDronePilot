@@ -42,14 +42,12 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nermi.djilib.DJIFacade;
 
 import java.io.IOException;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,9 +56,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import dji.sdk.mobilerc.MobileRemoteController;
-import dji.sdk.products.Aircraft;
 
 
 /**
@@ -353,7 +348,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         startBackgroundThread();
-        virtualSticks = djiFacade.initVirtualSticks(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
+        virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
 
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         textView = (TextView) virtualSticks.findViewById(R.id.simpleText);
@@ -818,7 +813,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     /*
     Create listeners for Virtual Sticks
      */
-//    private void initVirtualSticks(View view){
+//    private void initVirtualSticksUI(View view){
 //        mScreenJoystickRight = (OnScreenJoystick)view.findViewById(R.id.directionJoystickRight);
 //        mScreenJoystickLeft = (OnScreenJoystick)view.findViewById(R.id.directionJoystickLeft);
 //    }

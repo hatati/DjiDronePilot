@@ -33,7 +33,7 @@ public class DJIFacade {
      * @param bellowViewId The target view that the virtual sticks layout need to be placed bellow
      * @return Return the view_virtual_sticks.xml view for later access
      */
-    public View initVirtualSticks(Activity activity, ViewGroup viewGroup, int bellowViewId){
+    public View initVirtualSticksUI(Activity activity, ViewGroup viewGroup, int bellowViewId){
         onScreenJoystickLeft = new OnScreenJoystick(activity, null);
         onScreenJoystickRight = new OnScreenJoystick(activity, null);
         View virtualSticks;
@@ -80,7 +80,5 @@ public class DJIFacade {
     public void setmMobileRemoteController(MobileRemoteController mMobileRemoteController) {
         this.mMobileRemoteController = mMobileRemoteController;
     }
-
-
 
 }
