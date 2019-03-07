@@ -119,6 +119,11 @@ public class DJIFacade {
     }
 
 
+    public void tearDownVirtualSticksListeners(){
+        onScreenJoystickRight.setJoystickListener(null);
+        onScreenJoystickLeft.setJoystickListener(null);
+    }
+
     public OnScreenJoystick getOnScreenJoystickRight() {
         return onScreenJoystickRight;
     }

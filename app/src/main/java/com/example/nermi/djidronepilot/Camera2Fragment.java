@@ -389,6 +389,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     @Override
     public void onPause() {
+        djiFacade.tearDownVirtualSticksListeners();
         //tearDownListeners();
         closeCamera();
         stopBackgroundThread();
