@@ -206,12 +206,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
      */
     private CaptureRequest mPreviewRequest;
 
-        /**
+    /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
-        /**
+    /**
      * Orientation of the camera sensor
      */
     private int mSensorOrientation;
@@ -225,12 +225,14 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session,
                                         @NonNull CaptureRequest request,
-                                        @NonNull CaptureResult partialResult) {}
+                                        @NonNull CaptureResult partialResult) {
+        }
 
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
-                                       @NonNull TotalCaptureResult result) {}
+                                       @NonNull TotalCaptureResult result) {
+        }
     };
 
     /**
@@ -361,7 +363,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         // Start initial model.
     }
 
-    /** Load the model and labels. */
+    /**
+     * Load the model and labels.
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -610,7 +614,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         }
     }
 
-    /** Takes photos and classify them periodically. */
+    /**
+     * Takes photos and classify them periodically.
+     */
     private Runnable periodicClassify =
             new Runnable() {
                 @Override
@@ -715,7 +721,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         mTextureView.setTransform(matrix);
     }
 
-    /** Classifies a frame from the preview stream. */
+    /**
+     * Classifies a frame from the preview stream.
+     */
     private void classifyFrame() {
         if (classifier == null || getActivity() == null || mCameraDevice == null) {
             showToast("Uninitialized Classifier or invalid context.");
