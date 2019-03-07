@@ -57,6 +57,8 @@ import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import dji.sdk.products.Aircraft;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -348,8 +350,8 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         startBackgroundThread();
-        virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
 
+        virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         textView = (TextView) virtualSticks.findViewById(R.id.simpleText);
 
@@ -370,7 +372,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onResume() {
         super.onResume();
         startBackgroundThread();
-        //setupListeners();
+        //TODO: Uncomment when you get a real drone
+        //djiFacade.setupDJIMobileRemoteController(DJIApplication.getAircraftInstance().getMobileRemoteController());
+        djiFacade.setupVirtualSticksListeners(getActivity());
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
