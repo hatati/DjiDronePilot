@@ -290,7 +290,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void setupListeners(){
         Aircraft aircraft = DJIApplication.getAircraftInstance();
         if (aircraft != null) {
-            mMobileRemoteController = aircraft.getMobileRemoteController();
+            //mMobileRemoteController = aircraft.getMobileRemoteController();
         }
 
 
@@ -299,7 +299,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void tearDownListeners() {
         Aircraft aircraft = DJIApplication.getAircraftInstance();
         if (aircraft != null) {
-            mMobileRemoteController = aircraft.getMobileRemoteController();
+            //mMobileRemoteController = aircraft.getMobileRemoteController();
 
         }
     }
