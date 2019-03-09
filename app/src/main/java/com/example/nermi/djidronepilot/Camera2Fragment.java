@@ -70,7 +70,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private ImageClassifier classifier;
 
     private TextView textView;
-    private View virtualSticks;
+    //private View virtualSticks;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -351,9 +351,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         startBackgroundThread();
 
-        virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
+        //virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        textView = (TextView) virtualSticks.findViewById(R.id.simpleText);
+        textView = (TextView) view.findViewById(R.id.simpleText);
 
         loadModel();
 
