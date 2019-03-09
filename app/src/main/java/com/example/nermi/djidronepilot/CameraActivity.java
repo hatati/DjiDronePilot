@@ -3,6 +3,8 @@ package com.example.nermi.djidronepilot;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.nermi.djilib.DAIFacade;
+
 public class CameraActivity extends AppCompatActivity {
 
     @Override
@@ -10,9 +12,9 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         if (null == savedInstanceState) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, Camera2Fragment.newInstance())
-                    .commit();
+            DAIFacade daiFacade = new DAIFacade();
+
+            daiFacade.initDjiUI(this, getSupportFragmentManager(), R.id.container);
         }
     }
 }

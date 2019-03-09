@@ -22,7 +22,8 @@ public class DAIFacade {
     public void initDjiUI(Activity activity, FragmentManager fragmentManager, int frameLayoutId){
         fragmentManager.beginTransaction().replace(frameLayoutId, Camera2Fragment.newInstance())
                 .commit();
-        djiFacade.initVirtualSticksUI(activity);
+
+
     }
 
     public void initParrotUI(){}
