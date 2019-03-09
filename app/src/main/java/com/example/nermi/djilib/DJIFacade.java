@@ -3,6 +3,7 @@ package com.example.nermi.djilib;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -29,49 +30,26 @@ public class DJIFacade {
     }
 
     /**
-     * Initialize and add the view_virtual_sticks.xml layout view to a viewgroup
-     * @param activity The current activity
-     * @param viewGroup The target ViewGroup element
-     * @param bellowViewId The target view that the virtual sticks layout need to be placed bellow
-     * @return Return the view_virtual_sticks.xml view for later access
-     */
-    public View initVirtualSticksUI(Activity activity, ViewGroup viewGroup, int bellowViewId){
-        onScreenJoystickLeft = new OnScreenJoystick(activity, null);
-        onScreenJoystickRight = new OnScreenJoystick(activity, null);
-        View virtualSticks;
-
-        //Define Layout parameters
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT
-        );
-
-        //Add rule for the relative layout
-        params.addRule(RelativeLayout.BELOW, bellowViewId);
-
-        //Inflate and add the Virtual Stick layout to the viewgroup
-        virtualSticks = View.inflate(activity, R.layout.view_virtual_sticks, null);
-        viewGroup.addView(virtualSticks, params);
-
-        return virtualSticks;
-    }
-
-    /**
      * Creates listeners for the the virtual sticks
      * @param activity The activity containing the virtual sticks
      */
+    //TODO: This method is called in Camera2Fragment. Should it?
     public void setupVirtualSticksListeners(Activity activity){
-        if(mMobileRemoteController == null){
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            });
+        onScreenJoystickLeft = new OnScreenJoystick(activity, null);
+        onScreenJoystickRight = new OnScreenJoystick(activity, null);
 
-            return;
-        }
+        //TODO: Uncomment when you have a drone
+//        if(mMobileRemoteController == null){
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
+//                    toast.show();
+//                }
+//            });
+//
+//            return;
+//        }
 
         assert onScreenJoystickLeft != null;
         assert onScreenJoystickRight != null;
@@ -92,6 +70,9 @@ public class DJIFacade {
                     mMobileRemoteController.setLeftStickHorizontal(pX);
                     mMobileRemoteController.setLeftStickVertical(pY);
                 }
+
+                Log.e("pX: ", String.valueOf(pX));
+                Log.e("pY: ", String.valueOf(pY));
 
             }
         });
