@@ -33,7 +33,7 @@ public class DJIFacade {
      * Creates listeners for the the virtual sticks
      * @param activity The activity containing the virtual sticks
      */
-    //TODO: This method is called in Camera2Fragment. Should it?
+    //TODO: This method is called in Camera2Fragment. Should it? Maybe call it in DAIFacade instead
     public void setupVirtualSticksListeners(Activity activity){
         onScreenJoystickLeft = new OnScreenJoystick(activity, null);
         onScreenJoystickRight = new OnScreenJoystick(activity, null);
