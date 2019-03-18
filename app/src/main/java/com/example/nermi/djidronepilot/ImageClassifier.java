@@ -2,6 +2,7 @@ package com.example.nermi.djidronepilot;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.text.SpannableString;

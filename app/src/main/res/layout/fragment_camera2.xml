@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             />
 
-        <com.example.nermi.djilib.OnScreenJoystick
+        <com.example.nermi.dailib.OnScreenJoystick
             android:id="@+id/directionJoystickRight"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -38,7 +38,7 @@
             android:layout_marginStart="10dp"
             android:background="@mipmap/joystick_bg"/>
 
-        <com.example.nermi.djilib.OnScreenJoystick
+        <com.example.nermi.dailib.OnScreenJoystick
             android:id="@+id/directionJoystickLeft"
             android:layout_width="100dp"
             android:layout_height="100dp"
