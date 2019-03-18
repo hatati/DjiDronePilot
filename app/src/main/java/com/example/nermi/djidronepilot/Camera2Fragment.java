@@ -45,7 +45,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nermi.djilib.DJIFacade;
+import com.example.nermi.dailib.DJIFacade;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,8 +56,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import dji.sdk.products.Aircraft;
 
 
 /**
@@ -70,7 +68,11 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private ImageClassifier classifier;
 
     private TextView textView;
-    //private View virtualSticks;
+
+    private String modelPath = "";
+    private String labelsPath = "";
+    private int imageSizeX;
+    private int imageSizeY;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -337,7 +339,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
             // Try to load model.
             try {
-                classifier = new ImageClassifierForwardeftRightCNN(getActivity());
+                classifier = new CustomCNN(getActivity(), modelPath, labelsPath, imageSizeX, imageSizeY);
 
             } catch (IOException e) {
                 Log.d(TAG, "Failed to load", e);
@@ -882,5 +884,21 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 //        mScreenJoystickLeft.setJoystickListener(null);
 //        mScreenJoystickRight.setJoystickListener(null);
 //    }
+
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
+    }
+
+    public void setLabelsPath(String labelsPath) {
+        this.labelsPath = labelsPath;
+    }
+
+    public void setImageSizeX(int imageSizeX){
+        this.imageSizeX = imageSizeX;
+    }
+
+    public void setImageSizeY(int imageSizeY){
+        this.imageSizeY = imageSizeY;
+    }
 
 }
