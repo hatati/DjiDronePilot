@@ -1,9 +1,12 @@
-package com.example.nermi.djilib;
+package com.example.nermi.dailib;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.nermi.djidronepilot.Camera2Fragment;
+import com.example.nermi.djidronepilot.R;
 
 public class DAIFacade {
 
@@ -19,8 +22,8 @@ public class DAIFacade {
 
     }
 
-    public void initDjiUI(Activity activity, FragmentManager fragmentManager, int frameLayoutId){
-        fragmentManager.beginTransaction().replace(frameLayoutId, Camera2Fragment.newInstance())
+    public void initDjiUI(AppCompatActivity activity, int frameLayoutId){
+        activity.getSupportFragmentManager().beginTransaction().replace(frameLayoutId, Camera2Fragment.newInstance())
                 .commit();
 
 
@@ -28,7 +31,13 @@ public class DAIFacade {
 
     public void initParrotUI(){}
 
-
+    public void initCNNModel(AppCompatActivity activity, String modelPath, String labelsPath, int imageSizeX, int imageSizeY, int frameLayoutId){
+        Camera2Fragment fragment = (Camera2Fragment) activity.getSupportFragmentManager().findFragmentById(frameLayoutId);
+        fragment.setModelPath(modelPath);
+        fragment.setLabelsPath(labelsPath);
+        fragment.setImageSizeX(imageSizeX);
+        fragment.setImageSizeY(imageSizeY);
+    }
 
     public void setModelPath(String path){}
 

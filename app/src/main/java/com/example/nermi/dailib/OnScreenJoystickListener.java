@@ -1,4 +1,4 @@
-package com.example.nermi.djilib;
+package com.example.nermi.dailib;
 
 /*
  * Copyright (c) 2014 Ville Saarinen

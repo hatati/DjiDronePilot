@@ -1,16 +1,7 @@
-package com.example.nermi.djilib;
+package com.example.nermi.dailib;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import com.example.nermi.djidronepilot.R;
 
 import dji.sdk.mobilerc.MobileRemoteController;
 
