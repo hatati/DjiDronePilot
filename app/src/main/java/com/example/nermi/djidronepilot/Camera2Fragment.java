@@ -33,6 +33,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
@@ -46,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nermi.dailib.DJIFacade;
+import com.example.nermi.dailib.OnScreenJoystick;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mobilerc.MobileRemoteController;
 
 
 /**
@@ -256,7 +261,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                         public void run() {
                             textView.setText(builder, TextView.BufferType.SPANNABLE);
                             Random r = new Random();
-//                            mMobileRemoteController.setLeftStickHorizontal(r.nextFloat());
+
+                            //djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.5f);
+//                            System.out.println("RC joeystick left: " + djiFacade.getmMobileRemoteController().getLeftStickHorizontal());
 //                            mMobileRemoteController.setLeftStickVertical(r.nextFloat());
 //                            mMobileRemoteController.setRightStickHorizontal(r.nextFloat());
 //                            mMobileRemoteController.setRightStickVertical(r.nextFloat());
@@ -375,8 +382,11 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         super.onResume();
         startBackgroundThread();
         //TODO: Uncomment when you get a real drone
-        //djiFacade.setupDJIMobileRemoteController(DJIApplication.getAircraftInstance().getMobileRemoteController());
-        djiFacade.setupVirtualSticksListeners(getActivity());
+        // Setup the Mobile Remote Controller
+        djiFacade.setupDJIMobileRemoteController(DJIApplication.getAircraftInstance().getMobileRemoteController());
+
+        // Setup virtual sticks listeners
+        djiFacade.setupVirtualSticksListeners((AppCompatActivity) getActivity(), R.id.container);
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
