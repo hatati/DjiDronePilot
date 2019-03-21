@@ -27,9 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
+import dji.common.util.CommonCallbacks;
 import dji.log.DJILog;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mobilerc.MobileRemoteController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
@@ -65,6 +67,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mBtnTakeOff;
     private Button mBtnLand;
     private Button mBtnForceLand;
+    private FlightController mFlightController;
 
     private TextView mTextView;
 
@@ -307,66 +310,66 @@ public class MainActivity extends Activity implements View.OnClickListener {
     //TODO: FlightController here can possibly be used to override the mobile remote controller. Check up!
     @Override
     public void onClick(View v) {
-//        Aircraft aircraft = DJIApplication.getAircraftInstance();
-//        if (aircraft != null) {
-//            mFlightController = aircraft.getFlightController();
-//        }
-//
-//        if (mFlightController == null)
-//            return;
-//
-//        switch (v.getId()) {
-//            case R.id.btn_take_off:
-//                mFlightController.startTakeoff(
-//                        new CommonCallbacks.CompletionCallback() {
-//                            @Override
-//                            public void onResult(DJIError djiError) {
-//                                if (djiError != null) {
-//                                    showToast(djiError.getDescription());
-//                                } else {
-//                                    showToast("Take off Success");
-//                                }
-//                            }
-//                        }
-//                );
-//
-//                break;
-//
-//            case R.id.btn_land:
-//                mFlightController.startLanding(
-//                        new CommonCallbacks.CompletionCallback() {
-//                            @Override
-//                            public void onResult(DJIError djiError) {
-//                                if (djiError != null) {
-//                                    showToast(djiError.getDescription());
-//                                } else {
-//                                    showToast("Start Landing");
-//                                }
-//                            }
-//                        }
-//                );
-//
-//                break;
-//
-//            case R.id.btn_force_land:
-//                mFlightController.confirmLanding(
-//                        new CommonCallbacks.CompletionCallback() {
-//                            @Override
-//                            public void onResult(DJIError djiError) {
-//                                if (djiError != null) {
-//                                    showToast(djiError.getDescription());
-//                                } else {
-//                                    showToast("Force Landing Success");
-//                                }
-//                            }
-//                        }
-//                );
-//
-//                break;
-//
-//            default:
-//                break;
-//        }
+        Aircraft aircraft = DJIApplication.getAircraftInstance();
+        if (aircraft != null) {
+            mFlightController = aircraft.getFlightController();
+        }
+
+        if (mFlightController == null)
+            return;
+
+        switch (v.getId()) {
+            case R.id.btn_take_off:
+                mFlightController.startTakeoff(
+                        new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError != null) {
+                                    showToast(djiError.getDescription());
+                                } else {
+                                    showToast("Take off Success");
+                                }
+                            }
+                        }
+                );
+
+                break;
+
+            case R.id.btn_land:
+                mFlightController.startLanding(
+                        new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError != null) {
+                                    showToast(djiError.getDescription());
+                                } else {
+                                    showToast("Start Landing");
+                                }
+                            }
+                        }
+                );
+
+                break;
+
+            case R.id.btn_force_land:
+                mFlightController.confirmLanding(
+                        new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError != null) {
+                                    showToast(djiError.getDescription());
+                                } else {
+                                    showToast("Force Landing Success");
+                                }
+                            }
+                        }
+                );
+
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void onClickSimulator(){
