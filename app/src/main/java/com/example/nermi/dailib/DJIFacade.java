@@ -1,8 +1,13 @@
 package com.example.nermi.dailib;
 
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.nermi.djidronepilot.R;
+
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mobilerc.MobileRemoteController;
 
 public class DJIFacade {
@@ -25,22 +30,24 @@ public class DJIFacade {
      * @param activity The activity containing the virtual sticks
      */
     //TODO: This method is called in Camera2Fragment. Should it? Maybe call it in DAIFacade instead
-    public void setupVirtualSticksListeners(Activity activity){
-        onScreenJoystickLeft = new OnScreenJoystick(activity, null);
-        onScreenJoystickRight = new OnScreenJoystick(activity, null);
+    public void setupVirtualSticksListeners(AppCompatActivity activity, int frameLayoutId){
+        onScreenJoystickLeft = activity.getSupportFragmentManager()
+                .findFragmentById(frameLayoutId).getView().findViewById(R.id.directionJoystickLeft);
+        onScreenJoystickRight = activity.getSupportFragmentManager()
+                .findFragmentById(frameLayoutId).getView().findViewById(R.id.directionJoystickRight);
 
         //TODO: Uncomment when you have a drone
-//        if(mMobileRemoteController == null){
-//            activity.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
-//                    toast.show();
-//                }
-//            });
-//
-//            return;
-//        }
+        if(mMobileRemoteController == null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+
+            return;
+        }
 
         assert onScreenJoystickLeft != null;
         assert onScreenJoystickRight != null;
@@ -62,8 +69,8 @@ public class DJIFacade {
                     mMobileRemoteController.setLeftStickVertical(pY);
                 }
 
-                Log.e("pX: ", String.valueOf(pX));
-                Log.e("pY: ", String.valueOf(pY));
+//                System.out.println("pX: " + String.valueOf(pX));
+//                System.out.println("pY: " + String.valueOf(pY));
 
             }
         });
@@ -84,6 +91,9 @@ public class DJIFacade {
                     mMobileRemoteController.setRightStickHorizontal(pX);
                     mMobileRemoteController.setRightStickVertical(pY);
                 }
+
+//                System.out.println("pX: " + String.valueOf(pX));
+//                System.out.println("pY: " + String.valueOf(pY));
             }
         });
 
