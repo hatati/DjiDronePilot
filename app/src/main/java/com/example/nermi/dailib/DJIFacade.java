@@ -20,34 +20,19 @@ public class DJIFacade {
 
     }
 
-    //TODO: Still needs testing on a real drones
     public void setupDJIMobileRemoteController(MobileRemoteController mobileRemoteController){
-        mMobileRemoteController = mobileRemoteController;
+            mMobileRemoteController = mobileRemoteController;
     }
 
     /**
      * Creates listeners for the the virtual sticks
      * @param activity The activity containing the virtual sticks
      */
-    //TODO: This method is called in Camera2Fragment. Should it? Maybe call it in DAIFacade instead
     public void setupVirtualSticksListeners(AppCompatActivity activity, int frameLayoutId){
         onScreenJoystickLeft = activity.getSupportFragmentManager()
                 .findFragmentById(frameLayoutId).getView().findViewById(R.id.directionJoystickLeft);
         onScreenJoystickRight = activity.getSupportFragmentManager()
                 .findFragmentById(frameLayoutId).getView().findViewById(R.id.directionJoystickRight);
-
-        //TODO: Uncomment when you have a drone
-        if(mMobileRemoteController == null){
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast toast = Toast.makeText(activity, "No Mobile Remote Controller connection", Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            });
-
-            return;
-        }
 
         assert onScreenJoystickLeft != null;
         assert onScreenJoystickRight != null;
