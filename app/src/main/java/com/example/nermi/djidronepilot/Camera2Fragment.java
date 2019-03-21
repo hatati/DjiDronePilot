@@ -46,7 +46,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nermi.dailib.DJIFacade;
 import com.example.nermi.dailib.OnScreenJoystick;
 
 import java.io.IOException;
@@ -58,9 +57,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import dji.sdk.flightcontroller.FlightController;
-import dji.sdk.mobilerc.MobileRemoteController;
 
 
 /**
@@ -81,8 +77,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
-
-    DJIFacade djiFacade;
 
     /**
      * Tag for the {@link Log}.
@@ -328,7 +322,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        djiFacade = new DJIFacade();
 
         return inflater.inflate(R.layout.fragment_camera2, container, false);
     }
@@ -360,7 +353,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         startBackgroundThread();
 
-        //virtualSticks = djiFacade.initVirtualSticksUI(getActivity(), view.findViewById(R.id.camera_view), R.id.texture);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         textView = (TextView) view.findViewById(R.id.simpleText);
 
@@ -381,12 +373,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onResume() {
         super.onResume();
         startBackgroundThread();
-        //TODO: Uncomment when you get a real drone
-        // Setup the Mobile Remote Controller
-        djiFacade.setupDJIMobileRemoteController(DJIApplication.getAircraftInstance().getMobileRemoteController());
-
-        // Setup virtual sticks listeners
-        djiFacade.setupVirtualSticksListeners((AppCompatActivity) getActivity(), R.id.container);
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -401,8 +387,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     @Override
     public void onPause() {
-        djiFacade.tearDownVirtualSticksListeners();
-        //tearDownListeners();
         closeCamera();
         stopBackgroundThread();
         super.onPause();
