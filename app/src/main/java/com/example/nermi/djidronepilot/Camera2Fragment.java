@@ -270,13 +270,13 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     private void inferMovement(Map.Entry<String, Float> highestProbLabel, Map<String, DroneCommands> labels){
         final Activity activity = getActivity();
-        if (activity != null) {
+        if (activity != null && djiFacade.getmMobileRemoteController() != null) {
             activity.runOnUiThread(
                     new Runnable() {
                         @Override
                         public void run() {
 
-                            if(labels.containsKey(highestProbLabel.getKey()) && djiFacade.getmMobileRemoteController() != null){
+                            if(labels.containsKey(highestProbLabel.getKey())){
                                 //System.out.println("Fly: " + highestProbLabel.getKey());
 
                                 switch (labels.get(highestProbLabel.getKey())){
@@ -286,18 +286,23 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(-0.2f);
                                         break;
                                     case ROLL_LEFT:
                                         System.out.println("ROLL LEFT");
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(-0.2f);
                                         break;
                                     case ROLL_RIGHT:
                                         System.out.println("ROLL RIGHT");
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0.2f);
                                         break;
                                     case YAW_LEFT:
                                         System.out.println("YAW LEFT");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(-0.2f);
                                         break;
                                     case YAW_RIGHT:
                                         System.out.println("YAW RIGHT");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.2f);
                                         break;
                                 }
                             }
