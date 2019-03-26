@@ -21,7 +21,7 @@ public class DAIFacade {
 
     public DAIFacade(){
         this.isConnectedToDrone = false;
-        djiFacade = new DJIFacade();
+        djiFacade = DJIFacade.getDjiFacade();
     }
 
     // DJI methods

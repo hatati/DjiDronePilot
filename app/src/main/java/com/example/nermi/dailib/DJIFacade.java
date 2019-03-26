@@ -16,7 +16,18 @@ public class DJIFacade {
     private OnScreenJoystick onScreenJoystickLeft;
     private MobileRemoteController mMobileRemoteController;
 
-    public DJIFacade(){
+    private static DJIFacade _djiFacade;
+
+    private static class SingletonHelper{
+        // Nested class is referenced when getDjiFacade is called
+        private static final DJIFacade _djiFacade = new DJIFacade();
+    }
+
+    public static DJIFacade getDjiFacade(){
+        return SingletonHelper._djiFacade;
+    }
+
+    private DJIFacade(){
 
     }
 

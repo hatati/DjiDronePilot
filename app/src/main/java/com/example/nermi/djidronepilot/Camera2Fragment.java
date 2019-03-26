@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nermi.dailib.DJIFacade;
 import com.example.nermi.dailib.DroneCommands;
 import com.example.nermi.dailib.OnScreenJoystick;
 
@@ -80,6 +81,8 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     //User defined labels
     private Map<String, DroneCommands> labels = new HashMap<>();
+
+    DJIFacade djiFacade;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -273,12 +276,13 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                         @Override
                         public void run() {
 
-                            if(labels.containsKey(highestProbLabel.getKey())){
+                            if(labels.containsKey(highestProbLabel.getKey()) && djiFacade.getmMobileRemoteController() != null){
                                 //System.out.println("Fly: " + highestProbLabel.getKey());
 
                                 switch (labels.get(highestProbLabel.getKey())){
                                     case PITCH_FORWARD:
                                         System.out.println("FORWARD");
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.2f);
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
@@ -412,6 +416,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onResume() {
         super.onResume();
+        djiFacade = DJIFacade.getDjiFacade();
         startBackgroundThread();
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
