@@ -56,8 +56,13 @@ public class DAIFacade {
             public void onFragmentPaused(FragmentManager fm, Fragment f) {
                 super.onFragmentPaused(fm, f);
 
-                //Tear down virtual sticks listeners
-                djiFacade.tearDownVirtualSticksListeners();
+                try{
+                    //Tear down virtual sticks listeners
+                    djiFacade.tearDownVirtualSticksListeners();
+                }catch (NullPointerException ex){
+                    ex.printStackTrace();
+                }
+
             }
         }, false);
 
