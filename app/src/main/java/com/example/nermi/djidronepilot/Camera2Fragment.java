@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nermi.dailib.DroneCommands;
 import com.example.nermi.dailib.OnScreenJoystick;
 
 import java.io.IOException;
@@ -53,7 +54,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -74,6 +77,9 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private String labelsPath = "";
     private int imageSizeX;
     private int imageSizeY;
+
+    //User defined labels
+    private Map<String, DroneCommands> labels = new HashMap<>();
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
@@ -254,13 +260,47 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                         @Override
                         public void run() {
                             textView.setText(builder, TextView.BufferType.SPANNABLE);
-                            Random r = new Random();
+                        }
+                    });
+        }
+    }
+
+    private void inferMovement(Map.Entry<String, Float> highestProbLabel, Map<String, DroneCommands> labels){
+        final Activity activity = getActivity();
+        if (activity != null) {
+            activity.runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if(labels.containsKey(highestProbLabel.getKey())){
+                                //System.out.println("Fly: " + highestProbLabel.getKey());
+
+                                switch (labels.get(highestProbLabel.getKey())){
+                                    case PITCH_FORWARD:
+                                        System.out.println("FORWARD");
+                                        break;
+                                    case PITCH_BACKWARDS:
+                                        System.out.println("BACKWARDS");
+                                        break;
+                                    case ROLL_LEFT:
+                                        System.out.println("ROLL LEFT");
+                                        break;
+                                    case ROLL_RIGHT:
+                                        System.out.println("ROLL RIGHT");
+                                        break;
+                                    case YAW_LEFT:
+                                        System.out.println("YAW LEFT");
+                                        break;
+                                    case YAW_RIGHT:
+                                        System.out.println("YAW RIGHT");
+                                        break;
+                                }
+                            }
+
 
                             //djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.5f);
 //                            System.out.println("RC joeystick left: " + djiFacade.getmMobileRemoteController().getLeftStickHorizontal());
-//                            mMobileRemoteController.setLeftStickVertical(r.nextFloat());
-//                            mMobileRemoteController.setRightStickHorizontal(r.nextFloat());
-//                            mMobileRemoteController.setRightStickVertical(r.nextFloat());
                         }
                     });
         }
@@ -728,6 +768,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         SpannableStringBuilder textToShow = new SpannableStringBuilder();
         Bitmap bitmap = mTextureView.getBitmap(classifier.getImageSizeX(), classifier.getImageSizeY());
         classifier.classifyFrame(bitmap, textToShow);
+
+        /*Infer movement from the label with highest probability*/
+        if(!labels.isEmpty()){
+            inferMovement(classifier.getSortedLabelsDescending().poll(), labels);
+            classifier.getSortedLabelsDescending().clear();
+        }
         bitmap.recycle();
         showToast(textToShow.toString());
     }
@@ -893,6 +939,10 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
     public void setImageSizeY(int imageSizeY){
         this.imageSizeY = imageSizeY;
+    }
+
+    public Map<String, DroneCommands> getLabels() {
+        return labels;
     }
 
 }

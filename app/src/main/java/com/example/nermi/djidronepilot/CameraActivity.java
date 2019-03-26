@@ -29,5 +29,8 @@ public class CameraActivity extends AppCompatActivity {
         super.onStart();
 
         daiFacade.initCNNModel(this, modelPath, labelsPath, 70,70, R.id.container);
+        daiFacade.djiPitchForward(this, R.id.container, "forward", 0.0);
+        daiFacade.djiRollLeft(this, R.id.container, "left", 0.0);
+        daiFacade.djiRollRight(this, R.id.container, "right", 0.0);
     }
 }

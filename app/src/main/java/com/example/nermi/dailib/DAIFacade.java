@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nermi.djidronepilot.Camera2Fragment;
 import com.example.nermi.djidronepilot.DJIApplication;
 import com.example.nermi.djidronepilot.R;
+
+import java.util.ArrayList;
 
 public class DAIFacade {
 
@@ -20,6 +24,7 @@ public class DAIFacade {
         djiFacade = new DJIFacade();
     }
 
+    // DJI methods
     public void initDjiUI(AppCompatActivity activity, int frameLayoutId){
         activity.getSupportFragmentManager().beginTransaction().replace(frameLayoutId, Camera2Fragment.newInstance())
                 .commit();
@@ -58,8 +63,6 @@ public class DAIFacade {
 
     }
 
-    public void initParrotUI(){}
-
     public void initCNNModel(AppCompatActivity activity, String modelPath, String labelsPath, int imageSizeX, int imageSizeY, int frameLayoutId){
         Camera2Fragment fragment = (Camera2Fragment) activity.getSupportFragmentManager().findFragmentById(frameLayoutId);
         fragment.setModelPath(modelPath);
@@ -68,15 +71,37 @@ public class DAIFacade {
         fragment.setImageSizeY(imageSizeY);
     }
 
-    public void pitchForward(Double sensitivityRate){}
+    public void djiPitchForward(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.PITCH_FORWARD);
 
-    public void pitchBackwards(Double sensitivityRate){}
+    }
 
-    public void rollRight(Double sensitivityRate){}
+    public void djiPitchBackwards(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.PITCH_BACKWARDS);
+    }
 
-    public void rollLeft(Double sensitivityRate){}
+    public void djiRollRight(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.ROLL_RIGHT);
+    }
 
-    public void yawRight(Double sensitivityRate){}
+    public void djiRollLeft(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.ROLL_LEFT);
+    }
 
-    public void yawLeft(Double sensitivityRate){}
+    public void djiYawRight(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.YAW_RIGHT);
+    }
+
+    public void djiYawLeft(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){
+        ((Camera2Fragment)activity.getSupportFragmentManager().findFragmentById(frameLayoutId))
+                .getLabels().put(label, DroneCommands.YAW_LEFT);
+    }
+
+    //Parrot methods
+    public void initParrotUI(){}
 }
