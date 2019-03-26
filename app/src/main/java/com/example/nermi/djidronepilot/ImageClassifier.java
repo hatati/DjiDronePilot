@@ -70,13 +70,23 @@ public abstract class ImageClassifier {
     private static final int FILTER_STAGES = 3;
     private static final float FILTER_FACTOR = 0.4f;
 
-    private PriorityQueue<Map.Entry<String, Float>> sortedLabels =
+    private PriorityQueue<Map.Entry<String, Float>> sortedLabelsAscending =
             new PriorityQueue<>(
                     RESULTS_TO_SHOW,
                     new Comparator<Map.Entry<String, Float>>() {
                         @Override
                         public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
                             return (o1.getValue()).compareTo(o2.getValue());
+                        }
+                    });
+
+    private PriorityQueue<Map.Entry<String, Float>> sortedLabelsDescending =
+            new PriorityQueue<>(
+                    RESULTS_TO_SHOW,
+                    new Comparator<Map.Entry<String, Float>>() {
+                        @Override
+                        public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
+                            return (o2.getValue()).compareTo(o1.getValue());
                         }
                     });
 
@@ -108,7 +118,7 @@ public abstract class ImageClassifier {
         long startTime = SystemClock.uptimeMillis();
         runInference();
         long endTime = SystemClock.uptimeMillis();
-        Log.e(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
+        //Log.e(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
 
         // Smooth the results across frames.
         applyFilter();
@@ -116,6 +126,7 @@ public abstract class ImageClassifier {
         // Print the results.
 
         printTopKLabels(builder);
+        constructLabelsProbabilityMap();
         long duration = endTime - startTime;
         SpannableString span = new SpannableString(duration + " ms");
         span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
@@ -215,22 +226,22 @@ public abstract class ImageClassifier {
             }
         }
         long endTime = SystemClock.uptimeMillis();
-        Log.d(TAG, "Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
+        //Log.d(TAG, "Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
     }
 
     /** Prints top-K labels, to be shown in UI as the results. */
     private void printTopKLabels(SpannableStringBuilder builder) {
         for (int i = 0; i < getNumLabels(); ++i) {
-            sortedLabels.add(
+            sortedLabelsAscending.add(
                     new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
-            if (sortedLabels.size() > RESULTS_TO_SHOW) {
-                sortedLabels.poll();
+            if (sortedLabelsAscending.size() > RESULTS_TO_SHOW) {
+                sortedLabelsAscending.poll();
             }
         }
 
-        final int size = sortedLabels.size();
+        final int size = sortedLabelsAscending.size();
         for (int i = 0; i < size; i++) {
-            Map.Entry<String, Float> label = sortedLabels.poll();
+            Map.Entry<String, Float> label = sortedLabelsAscending.poll();
             SpannableString span =
                     new SpannableString(String.format("%s: %4.2f\n", label.getKey(), label.getValue()));
             int color;
@@ -249,6 +260,16 @@ public abstract class ImageClassifier {
             builder.insert(0, span);
         }
     }
+
+    /** Construct a Sorted Map off the labels and their probabilities in descending order */
+    private void constructLabelsProbabilityMap() {
+        for (int i = 0; i < getNumLabels(); ++i) {
+            sortedLabelsDescending.add(
+                    new AbstractMap.SimpleEntry<>(labelList.get(i), getNormalizedProbability(i)));
+
+            }
+    }
+
 
     /**
      * Get the name of the model file stored in Assets.
@@ -333,5 +354,9 @@ public abstract class ImageClassifier {
      */
     protected int getNumLabels() {
         return labelList.size();
+    }
+
+    public PriorityQueue<Map.Entry<String, Float>> getSortedLabelsDescending() {
+        return sortedLabelsDescending;
     }
 }
