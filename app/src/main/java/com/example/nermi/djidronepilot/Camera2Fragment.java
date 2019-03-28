@@ -282,26 +282,42 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                 switch (labels.get(highestProbLabel.getKey())){
                                     case PITCH_FORWARD:
                                         System.out.println("FORWARD");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
                                         djiFacade.getmMobileRemoteController().setRightStickVertical(0.2f);
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
                                         djiFacade.getmMobileRemoteController().setRightStickVertical(-0.2f);
                                         break;
                                     case ROLL_LEFT:
                                         System.out.println("ROLL LEFT");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(-0.2f);
                                         break;
                                     case ROLL_RIGHT:
                                         System.out.println("ROLL RIGHT");
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(0.2f);
                                         break;
                                     case YAW_LEFT:
                                         System.out.println("YAW LEFT");
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
                                         djiFacade.getmMobileRemoteController().setLeftStickHorizontal(-0.2f);
                                         break;
                                     case YAW_RIGHT:
                                         System.out.println("YAW RIGHT");
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
                                         djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.2f);
                                         break;
                                 }
@@ -439,6 +455,13 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onPause() {
         closeCamera();
         stopBackgroundThread();
+        // TODO: See if the drone stops moving after the fragment has exited
+        if (djiFacade.getmMobileRemoteController() != null){
+            djiFacade.getmMobileRemoteController().setRightStickVertical(0);
+            djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
+            djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+            djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
+        }
         super.onPause();
     }
 
