@@ -455,6 +455,12 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     public void onPause() {
         closeCamera();
         stopBackgroundThread();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        classifier.close();
         // TODO: See if the drone stops moving after the fragment has exited
         if (djiFacade.getmMobileRemoteController() != null){
             djiFacade.getmMobileRemoteController().setRightStickVertical(0);
@@ -462,12 +468,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
             djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
             djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
         }
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        classifier.close();
         super.onDestroy();
     }
 
