@@ -3,6 +3,8 @@
     package="com.example.nermi.djidronepilot">
 
     <!-- Permissions and features -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -70,6 +72,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraActivity"></activity>
+
+
     </application>
 
 </manifest>

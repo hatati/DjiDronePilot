@@ -34,22 +34,14 @@
             android:textSize="19sp" />
     </RelativeLayout>
 
-    <TextView
-        android:layout_marginTop="70dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Simulator is off."
-        android:id="@+id/textview_simulator"/>
 
     <ToggleButton
         android:id="@+id/btn_start_simulator"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textview_simulator"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="100dp"
         android:text="@string/start_flight"
         android:textOff="@string/start_flight"
         android:textOn="@string/start_flight" />

@@ -61,7 +61,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private MobileRemoteController mMobileRemoteController;
 
-
     protected TextView mConnectStatusTextView;
     private ToggleButton mBtnSimulator;
     private Button mBtnTakeOff;
@@ -69,8 +68,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mBtnForceLand;
     private FlightController mFlightController;
 
-    private TextView mTextView;
-
+    private BroadcastReceiver smsBroadcastReceiver;
 
 
     @Override
@@ -80,6 +78,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
 
         initUI();
+
+        smsBroadcastReceiver = new SmsBroadcastReciever();
 
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
@@ -232,6 +232,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(SmsBroadcastReciever.SMS_RECEIVED);
+        intentFilter.setPriority(2147483647);
+        registerReceiver(smsBroadcastReceiver, intentFilter);
+    }
+
+    @Override
     public void onResume() {
         Log.e(TAG, "onResume");
         super.onResume();
@@ -251,6 +259,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onStop() {
         Log.e(TAG, "onStop");
         super.onStop();
+        unregisterReceiver(smsBroadcastReceiver);
     }
 
     public void onReturn(View view){
@@ -271,7 +280,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtnLand = (Button) findViewById(R.id.btn_land);
         mBtnForceLand = (Button) findViewById(R.id.btn_force_land);
         mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
-        mTextView = (TextView) findViewById(R.id.textview_simulator);
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
 
         mBtnTakeOff.setOnClickListener(this);
