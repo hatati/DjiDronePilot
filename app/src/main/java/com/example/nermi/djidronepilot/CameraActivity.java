@@ -8,8 +8,8 @@ import com.example.nermi.dailib.DAIFacade;
 public class CameraActivity extends AppCompatActivity {
 
 
-    private final String modelPath = "forward-left-right-CNN-RGB.tflite";
-    private final String labelsPath = "labels_forward_left_right.txt";
+    private final String modelPath = "landing_stripes-CNN-RGB.tflite";
+    private final String labelsPath = "labels_landing_stripe.txt";
     DAIFacade daiFacade;
 
     @Override
