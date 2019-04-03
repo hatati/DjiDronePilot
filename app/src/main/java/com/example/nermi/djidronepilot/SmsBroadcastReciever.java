@@ -11,7 +11,7 @@ public class SmsBroadcastReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction() == SMS_RECEIVED) {
+        if (intent.getAction().equals(SMS_RECEIVED)) {
             Toast.makeText(context, "TESTING BROADCAST RECIEVER", Toast.LENGTH_LONG).show();
         }
     }
