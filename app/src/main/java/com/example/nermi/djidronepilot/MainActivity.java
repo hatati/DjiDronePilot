@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         initUI();
 
-        smsBroadcastReceiver = new SmsBroadcastReciever();
+        smsBroadcastReceiver = SmsBroadcastReceiver.getSmsBroadcastReciever();
 
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter(SmsBroadcastReciever.SMS_RECEIVED);
+        IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
         registerReceiver(smsBroadcastReceiver, intentFilter);
     }
 

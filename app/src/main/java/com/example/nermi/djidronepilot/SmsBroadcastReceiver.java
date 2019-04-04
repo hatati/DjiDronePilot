@@ -7,11 +7,19 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-public class SmsBroadcastReciever extends BroadcastReceiver {
+public class SmsBroadcastReceiver extends BroadcastReceiver {
 
     public static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
+
+    private static class SingletonHelper{
+        // Nested class is referenced when getDjiFacade is called
+        private static final SmsBroadcastReceiver _sms_broadcast_receiver = new SmsBroadcastReceiver();
+    }
+
+    public static SmsBroadcastReceiver getSmsBroadcastReciever(){
+        return SingletonHelper._sms_broadcast_receiver;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
