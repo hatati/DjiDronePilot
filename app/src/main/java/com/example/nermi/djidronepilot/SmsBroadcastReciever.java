@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 public class SmsBroadcastReciever extends BroadcastReceiver {
@@ -25,15 +26,33 @@ public class SmsBroadcastReciever extends BroadcastReceiver {
             }
             for (SmsMessage msg : sms) {
                 Log.e("RECEIVED MSG",":"+msg.getMessageBody());
-                // Verify if the message came from our known sender
-                if(msg.getDisplayMessageBody().equals("START")){
-                    Intent cameraIntent = new Intent(context, CameraActivity.class);
-                    context.startActivity(cameraIntent);
+
+                switch (msg.getMessageBody()){
+                    case "START":
+                        Intent cameraIntent = new Intent(context, CameraActivity.class);
+                        context.startActivity(cameraIntent);
+                        break;
+                    case "LAND":
+                        View land = ((MainActivity)context).findViewById(R.id.btn_land);
+                        ((MainActivity)context).onClick(land);
+                        break;
+                    case "FORCE LAND":
+                        View force_land = ((MainActivity)context).findViewById(R.id.btn_force_land);
+                        ((MainActivity)context).onClick(force_land);
+                        break;
+                    case "TAKE OFF":
+                        View take_off = ((MainActivity)context).findViewById(R.id.btn_take_off);
+                        ((MainActivity)context).onClick(take_off);
+                        break;
+                    default: break;
                 }
+
             }
 
 
         }
 
     }
+
+
 }
