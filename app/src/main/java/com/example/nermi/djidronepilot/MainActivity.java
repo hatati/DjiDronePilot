@@ -55,6 +55,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS,
     };
     private List<String> missingPermission = new ArrayList<>();
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
