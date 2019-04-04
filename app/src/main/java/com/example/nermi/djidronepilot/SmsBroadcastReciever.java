@@ -26,7 +26,10 @@ public class SmsBroadcastReciever extends BroadcastReceiver {
             for (SmsMessage msg : sms) {
                 Log.e("RECEIVED MSG",":"+msg.getMessageBody());
                 // Verify if the message came from our known sender
-                Toast.makeText(context, "RECEIVED MSG: " + msg.getMessageBody(), Toast.LENGTH_LONG).show();
+                if(msg.getDisplayMessageBody().equals("START")){
+                    Intent cameraIntent = new Intent(context, CameraActivity.class);
+                    context.startActivity(cameraIntent);
+                }
             }
 
 
