@@ -54,6 +54,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECEIVE_SMS,
     };
     private List<String> missingPermission = new ArrayList<>();
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
@@ -235,7 +236,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter(SmsBroadcastReciever.SMS_RECEIVED);
-        intentFilter.setPriority(2147483647);
         registerReceiver(smsBroadcastReceiver, intentFilter);
     }
 
