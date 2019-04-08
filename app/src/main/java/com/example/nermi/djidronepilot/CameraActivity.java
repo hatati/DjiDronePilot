@@ -35,12 +35,15 @@ public class CameraActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        //Start GPSLog Service
         Intent intent = new Intent(getApplicationContext(), GPSLog_Service.class);
         startService(intent);
 
+        //Register SMSReceiver
         IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
         registerReceiver(smsBroadcastReceiver, intentFilter);
 
+        //Register GPSLocationReceiver
         IntentFilter gpsFilter = new IntentFilter(GPSLocationReceiver.GPS_RECEIVED);
         registerReceiver(gpsLocationReceiver, gpsFilter);
 
@@ -54,8 +57,10 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        //Unregister Receivers
         unregisterReceiver(smsBroadcastReceiver);
         unregisterReceiver(gpsLocationReceiver);
+        //Stop GPSLog Service
         Intent intent = new Intent(getApplicationContext(), GPSLog_Service.class);
         stopService(intent);
     }
