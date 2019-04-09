@@ -43,7 +43,7 @@ public class CustomCNN extends ImageClassifier {
         if(modelPath != null)
             return modelPath;
 
-        return "forward-left-right-CNN-RGB.tflite";
+        return "landing_stripe-CNN-RGB.tflite";
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CustomCNN extends ImageClassifier {
         if(labelPath != null)
             return labelPath;
 
-        return "labels_forward_left_right.txt";
+        return "labels_landing_stripe.txt";
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CustomCNN extends ImageClassifier {
         if(imageSizeX != 0)
             return imageSizeX;
 
-        return 70;
+        return 80;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CustomCNN extends ImageClassifier {
         if(imageSizeY != 0)
             return imageSizeY;
 
-        return 70;
+        return 80;
     }
 
     @Override
