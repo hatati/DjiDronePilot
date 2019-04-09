@@ -12,23 +12,49 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class GPSLog_Service extends Service{
+
+    private String GPS_LOG_FILE = "gps_logs.txt";
+    private OutputStreamWriter gpsLogWriter = null;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Criteria criteria;
 
+
+
     @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
         super.onCreate();
+        try {
+            gpsLogWriter = openFile(GPS_LOG_FILE, MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Something went wrong when opening the file", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Intent intent = new Intent(GPSLocationReceiver.GPS_RECEIVED);
-                intent.putExtra("coordinates", location.getLongitude() + " " + location.getLatitude());
+                intent.putExtra("coordinates", location.getLatitude() + ", " + location.getLongitude());
                 sendBroadcast(intent);
+
+                try {
+                    writeToFile(gpsLogWriter, location.getLatitude() + ", " + location.getLongitude() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -62,11 +88,34 @@ public class GPSLog_Service extends Service{
 
         if(locationManager != null)
             locationManager.removeUpdates(locationListener);
+
+        if(gpsLogWriter != null) {
+            try {
+                closeFile(gpsLogWriter);
+                Toast.makeText(this, "Succesfully Closed File", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private OutputStreamWriter openFile(String filename, int MODE) throws FileNotFoundException {
+        FileOutputStream fileOutputStream = openFileOutput(filename, MODE);
+        return new OutputStreamWriter(fileOutputStream);
+    }
+
+    private void writeToFile(OutputStreamWriter outputStreamWriter, String sourceText) throws IOException{
+        outputStreamWriter.write(sourceText);
+        outputStreamWriter.flush();
+    }
+
+    private void closeFile(OutputStreamWriter outputStreamWriter) throws IOException {
+        outputStreamWriter.close();
     }
 }
