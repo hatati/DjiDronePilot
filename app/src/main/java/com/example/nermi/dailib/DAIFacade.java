@@ -70,10 +70,6 @@ public class DAIFacade {
 
     public void initCNNModel(AppCompatActivity activity, String modelPath, String labelsPath, int imageSizeX, int imageSizeY, int frameLayoutId){
         Camera2Fragment fragment = (Camera2Fragment) activity.getSupportFragmentManager().findFragmentById(frameLayoutId);
-        fragment.setModelPath(modelPath);
-        fragment.setLabelsPath(labelsPath);
-        fragment.setImageSizeX(imageSizeX);
-        fragment.setImageSizeY(imageSizeY);
     }
 
     public void djiPitchForward(AppCompatActivity activity, int frameLayoutId, String label, Double sensitivityRate){

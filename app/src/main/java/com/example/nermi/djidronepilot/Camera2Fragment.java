@@ -33,7 +33,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
@@ -48,7 +47,6 @@ import android.widget.Toast;
 
 import com.example.nermi.dailib.DJIFacade;
 import com.example.nermi.dailib.DroneCommands;
-import com.example.nermi.dailib.OnScreenJoystick;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +56,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -73,11 +70,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     private ImageClassifier classifier;
 
     private TextView textView;
-
-    private String modelPath = "";
-    private String labelsPath = "";
-    private int imageSizeX;
-    private int imageSizeY;
 
     //User defined labels
     private Map<String, DroneCommands> labels = new HashMap<>();
@@ -404,7 +396,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
             // Try to load model.
             try {
-                classifier = new CustomCNN(getActivity(), modelPath, labelsPath, imageSizeX, imageSizeY);
+                classifier = new LandingStripeCNN(getActivity());
 
             } catch (IOException e) {
                 Log.d(TAG, "Failed to load", e);
@@ -958,23 +950,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 //        mScreenJoystickRight.setJoystickListener(null);
 //    }
 
-    public void setModelPath(String modelPath) {
-        this.modelPath = modelPath;
-    }
-
-    public void setLabelsPath(String labelsPath) {
-        this.labelsPath = labelsPath;
-    }
-
-    public void setImageSizeX(int imageSizeX){
-        this.imageSizeX = imageSizeX;
-    }
-
-    public void setImageSizeY(int imageSizeY){
-        this.imageSizeY = imageSizeY;
-    }
-
-    public Map<String, DroneCommands> getLabels() {
+   public Map<String, DroneCommands> getLabels() {
         return labels;
     }
 
