@@ -13,7 +13,6 @@ public class CameraActivity extends AppCompatActivity {
     private final String modelPath = "landing_stripes-CNN-RGB.tflite";
     private final String labelsPath = "labels_landing_stripe.txt";
     BroadcastReceiver smsBroadcastReceiver;
-    BroadcastReceiver gpsLocationReceiver;
     DAIFacade daiFacade;
 
     @Override
@@ -21,7 +20,6 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         smsBroadcastReceiver = SmsBroadcastReceiver.getSmsBroadcastReceiver();
-        gpsLocationReceiver = new GPSLocationReceiver();
 
         if (null == savedInstanceState) {
             daiFacade = new DAIFacade();
@@ -35,17 +33,9 @@ public class CameraActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        //Start GPSLog Service
-        Intent intent = new Intent(getApplicationContext(), GPSLog_Service.class);
-        startService(intent);
-
         //Register SMSReceiver
         IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
         registerReceiver(smsBroadcastReceiver, intentFilter);
-
-        //Register GPSLocationReceiver
-        IntentFilter gpsFilter = new IntentFilter(GPSLocationReceiver.GPS_RECEIVED);
-        registerReceiver(gpsLocationReceiver, gpsFilter);
 
         daiFacade.initCNNModel(this, modelPath, labelsPath, 70,70, R.id.container);
         daiFacade.djiPitchForward(this, R.id.container, "forward", 0.0);
@@ -59,10 +49,6 @@ public class CameraActivity extends AppCompatActivity {
         super.onStop();
         //Unregister Receivers
         unregisterReceiver(smsBroadcastReceiver);
-        unregisterReceiver(gpsLocationReceiver);
-        //Stop GPSLog Service
-        Intent intent = new Intent(getApplicationContext(), GPSLog_Service.class);
-        stopService(intent);
     }
 
 }
