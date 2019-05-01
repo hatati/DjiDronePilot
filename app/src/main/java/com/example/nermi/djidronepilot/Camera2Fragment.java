@@ -274,44 +274,47 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                 switch (labels.get(highestProbLabel.getKey())){
                                     case PITCH_FORWARD:
                                         System.out.println("FORWARD");
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.2f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.4f);
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(-0.2f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(-0.4f);
                                         break;
                                     case ROLL_LEFT:
                                         System.out.println("ROLL LEFT");
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(-0.2f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(-0.1f);
                                         break;
                                     case ROLL_RIGHT:
                                         System.out.println("ROLL RIGHT");
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0.2f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0.1f);
                                         break;
                                     case YAW_LEFT:
                                         System.out.println("YAW LEFT");
-                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(-0.2f);
+                                        djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(-0.1f);
                                         break;
                                     case YAW_RIGHT:
                                         System.out.println("YAW RIGHT");
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
                                         djiFacade.getmMobileRemoteController().setRightStickVertical(0);
-                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.2f);
+                                        djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                        djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.1f);
                                         break;
+                                    default: break;
                                 }
                             }
 
