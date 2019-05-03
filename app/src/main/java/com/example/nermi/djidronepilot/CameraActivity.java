@@ -42,7 +42,7 @@ public class CameraActivity extends AppCompatActivity {
         daiFacade.djiRollLeft(this, R.id.container, "roll_left", 0.0);
         daiFacade.djiRollRight(this, R.id.container, "roll_right", 0.0);
         daiFacade.djiYawLeft(this, R.id.container, "yaw_left", 0.0);
-        daiFacade.djiRollRight(this, R.id.container, "yaw_right", 0.0);
+        daiFacade.djiYawRight(this, R.id.container, "yaw_right", 0.0);
 
     }
 

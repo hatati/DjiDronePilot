@@ -268,7 +268,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                         @Override
                         public void run() {
 
-                            if(labels.containsKey(highestProbLabel.getKey())){
+                            if(labels.containsKey(highestProbLabel.getKey()) && highestProbLabel.getValue() > 0.80f){
                                 //System.out.println("Fly: " + highestProbLabel.getKey());
 
                                 switch (labels.get(highestProbLabel.getKey())){
@@ -277,7 +277,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                         djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
                                         djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.4f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.3f);
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
@@ -316,6 +316,11 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                         break;
                                     default: break;
                                 }
+                            }else{
+                                djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
+                                djiFacade.getmMobileRemoteController().setRightStickVertical(0);
+                                djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
+                                djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
                             }
 
 
