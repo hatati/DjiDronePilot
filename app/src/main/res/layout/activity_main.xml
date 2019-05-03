@@ -35,23 +35,23 @@
     </RelativeLayout>
 
 
-    <ToggleButton
-        android:id="@+id/btn_start_simulator"
+    <Button
+        android:id="@+id/btn_start_flight"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:text="@string/start_flight"
-        android:textOff="@string/start_flight"
-        android:textOn="@string/start_flight" />
+        android:onClick="startFlight"
+         />
 
     <Button
         android:id="@+id/btn_take_off"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_start_simulator"
+        android:layout_below="@+id/btn_start_flight"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="Take Off" />

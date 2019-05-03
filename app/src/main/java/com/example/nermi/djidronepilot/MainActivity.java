@@ -64,7 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private MobileRemoteController mMobileRemoteController;
 
     protected TextView mConnectStatusTextView;
-    private ToggleButton mBtnSimulator;
+    private Button mBtnStart;
     private Button mBtnTakeOff;
     private Button mBtnLand;
     private Button mBtnForceLand;
@@ -280,22 +280,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtnTakeOff = (Button) findViewById(R.id.btn_take_off);
         mBtnLand = (Button) findViewById(R.id.btn_land);
         mBtnForceLand = (Button) findViewById(R.id.btn_force_land);
-        mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
+        mBtnStart = (Button) findViewById(R.id.btn_start_flight);
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnForceLand.setOnClickListener(this);
-
-        mBtnSimulator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if(buttonView == mBtnSimulator){
-                    onClickSimulator();
-                }
-            }
-        });
 
     }
 
@@ -381,9 +371,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void onClickSimulator(){
+
+    public void startFlight(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
-
 }
