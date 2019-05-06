@@ -61,8 +61,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
-    private MobileRemoteController mMobileRemoteController;
-
     protected TextView mConnectStatusTextView;
     private Button mBtnStart;
     private Button mBtnTakeOff;
@@ -245,13 +243,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Log.e(TAG, "onResume");
         super.onResume();
         updateTitleBar();
-        setupListeners();
-
     }
 
     @Override
     public void onPause() {
-        tearDownListeners();
         Log.e(TAG, "onPause");
         super.onPause();
     }
@@ -289,24 +284,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private void setupListeners(){
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            //mMobileRemoteController = aircraft.getMobileRemoteController();
-        }
 
-
-    }
-
-    private void tearDownListeners() {
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            //mMobileRemoteController = aircraft.getMobileRemoteController();
-
-        }
-    }
-
-    //TODO: FlightController here can possibly be used to override the mobile remote controller. Check up!
+    //TODO: Add Start Flight here when the code is done
     @Override
     public void onClick(View v) {
         Aircraft aircraft = DJIApplication.getAircraftInstance();

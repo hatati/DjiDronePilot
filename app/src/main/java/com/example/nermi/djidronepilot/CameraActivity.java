@@ -10,8 +10,6 @@ import com.example.nermi.dailib.DJIFacade;
 
 public class CameraActivity extends AppCompatActivity {
 
-    private final String modelPath = "landing_stripes-CNN-RGB.tflite";
-    private final String labelsPath = "labels_landing_stripe.txt";
     BroadcastReceiver smsBroadcastReceiver;
     DJIFacade djiFacade;
 
@@ -23,9 +21,7 @@ public class CameraActivity extends AppCompatActivity {
 
         if (null == savedInstanceState) {
             djiFacade = DJIFacade.getDjiFacade();
-
             djiFacade.initUI(this, R.id.container);
-
         }
     }
 

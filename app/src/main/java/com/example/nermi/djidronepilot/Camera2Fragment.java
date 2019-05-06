@@ -322,10 +322,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                 djiFacade.getmMobileRemoteController().setLeftStickVertical(0);
                                 djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0);
                             }
-
-
-                            //djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0.5f);
-//                            System.out.println("RC joeystick left: " + djiFacade.getmMobileRemoteController().getLeftStickHorizontal());
                         }
                     });
         }
@@ -461,7 +457,6 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
     @Override
     public void onDestroy() {
         classifier.close();
-        // TODO: See if the drone stops moving after the fragment has exited
         if (djiFacade.getmMobileRemoteController() != null){
             djiFacade.getmMobileRemoteController().setRightStickVertical(0);
             djiFacade.getmMobileRemoteController().setRightStickHorizontal(0);
@@ -889,76 +884,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
         }
     }
 
-
-    /*
-    Create listeners for Virtual Sticks
-     */
-//    private void initVirtualSticksUI(View view){
-//        mScreenJoystickRight = (OnScreenJoystick)view.findViewById(R.id.directionJoystickRight);
-//        mScreenJoystickLeft = (OnScreenJoystick)view.findViewById(R.id.directionJoystickLeft);
-//    }
-//
-//    private void setupListeners(){
-//        try {
-//            mMobileRemoteController =
-//                    ((Aircraft) DJIApplication.getAircraftInstance()).getMobileRemoteController();
-//        }catch (Exception exception){
-//            exception.printStackTrace();
-//        }
-//
-////        if (mMobileRemoteController != null) {
-//////            mTextView.setText(mTextView.getText() + "\n" + "Mobile Connected");
-//////        } else {
-//////            mTextView.setText(mTextView.getText() + "\n" + "Mobile Disconnected");
-//////        }
-//
-//        mScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
-//            @Override
-//            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-//                if (Math.abs(pX) < 0.02) {
-//                    pX = 0;
-//                }
-//
-//                if (Math.abs(pY) < 0.02) {
-//                    pY = 0;
-//                }
-//
-//
-//                if (mMobileRemoteController != null) {
-//                    mMobileRemoteController.setLeftStickHorizontal(pX);
-//                    mMobileRemoteController.setLeftStickVertical(pY);
-//                }
-//
-//            }
-//        });
-//
-//        mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
-//            @Override
-//            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-//                if (Math.abs(pX) < 0.02) {
-//                    pX = 0;
-//                }
-//
-//                if (Math.abs(pY) < 0.02) {
-//                    pY = 0;
-//                }
-//                if (mMobileRemoteController != null) {
-//                    mMobileRemoteController.setRightStickHorizontal(pX);
-//                    mMobileRemoteController.setRightStickVertical(pY);
-//                }
-//            }
-//        });
-//
-//    }
-
-//    private void tearDownListeners() {
-//       // Aircraft aircraft = DJIApplication.getAircraftInstance();
-//
-//        mScreenJoystickLeft.setJoystickListener(null);
-//        mScreenJoystickRight.setJoystickListener(null);
-//    }
-
-   public Map<String, DroneCommands> getLabels() {
+    public Map<String, DroneCommands> getLabels() {
         return labels;
     }
 
