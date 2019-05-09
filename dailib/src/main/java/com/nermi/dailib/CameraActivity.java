@@ -9,14 +9,12 @@ public class CameraActivity extends AppCompatActivity {
 
     private final String modelPath = "landing_stripes-CNN-RGB.tflite";
     private final String labelsPath = "labels_landing_stripe.txt";
-    BroadcastReceiver smsBroadcastReceiver;
     DAIFacade daiFacade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        smsBroadcastReceiver = SmsBroadcastReceiver.getSmsBroadcastReceiver();
 
         if (null == savedInstanceState) {
             daiFacade = new DAIFacade();
@@ -29,10 +27,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //Register SMSReceiver
-        IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
-        registerReceiver(smsBroadcastReceiver, intentFilter);
 
         daiFacade.initCNNModel(this, modelPath, labelsPath, 70,70, R.id.container);
         daiFacade.djiPitchForward(this, R.id.container, "forward", 0.0);
@@ -47,7 +41,6 @@ public class CameraActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         //Unregister Receivers
-        unregisterReceiver(smsBroadcastReceiver);
     }
 
 }

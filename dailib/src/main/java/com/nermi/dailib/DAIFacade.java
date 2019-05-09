@@ -5,8 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.nermi.djidronepilot.Camera2Fragment;
-import com.example.nermi.djidronepilot.DJIApplication;
+import com.nermi.dailib.Camera2Fragment;
+import com.nermi.dailib.DJIApplication;
 
 public class DAIFacade {
 
