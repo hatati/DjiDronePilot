@@ -10,7 +10,7 @@ ext{
 
     publishedGroupId = 'com.nermi.dailib'
     artifact = 'dailib'
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.2'
 
     libraryDescription = ''
     siteUrl = 'https://github.com/hatati/DJIDronePilot'

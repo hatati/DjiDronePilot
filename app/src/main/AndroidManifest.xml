@@ -33,7 +33,7 @@
 
     <!-- Permissions and features -->
     <application
-        android:name=".MApplication"
+        android:name="com.example.nermi.MApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -63,7 +63,7 @@
         <service android:name="dji.sdk.sdkmanager.DJIGlobalService"></service>
         <!-- DJI SDK -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.nermi.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -72,9 +72,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity"></activity>
-
-        <service android:name=".GPSLog_Service"></service>
+        <activity android:name="com.example.nermi.CameraActivity"></activity>
 
     </application>
 

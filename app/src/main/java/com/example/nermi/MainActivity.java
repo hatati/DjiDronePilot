@@ -1,4 +1,4 @@
-package com.example.nermi.djidronepilot;
+package com.example.nermi;
 
 import android.Manifest;
 import android.app.Activity;
@@ -21,6 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.nermi.CameraActivity;
+import com.example.nermi.SmsBroadcastReceiver;
+import com.example.nermi.djidronepilot.R;
+import com.nermi.dailib.DJIApplication;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,7 +41,7 @@ import dji.sdk.mobilerc.MobileRemoteController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -385,5 +390,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
-
 }

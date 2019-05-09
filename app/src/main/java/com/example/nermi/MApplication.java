@@ -1,8 +1,9 @@
-package com.example.nermi.djidronepilot;
+package com.example.nermi;
 
 import android.app.Application;
 import android.content.Context;
 
+import com.nermi.dailib.DJIApplication;
 import com.secneo.sdk.Helper;
 
 public class MApplication extends Application {

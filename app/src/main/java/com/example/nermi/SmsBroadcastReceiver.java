@@ -1,4 +1,4 @@
-package com.example.nermi.djidronepilot;
+package com.example.nermi;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.View;
+
+import com.example.nermi.djidronepilot.R;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
