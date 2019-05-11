@@ -1,20 +1,18 @@
 package com.example.nermi;
 
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.nermi.djidronepilot.R;
-import com.nermi.dailib.DAIFacade;
+import com.nermi.dailib.DJIFacade;
+
 
 public class CameraActivity extends AppCompatActivity {
 
-    private final String modelPath = "landing_stripes-CNN-RGB.tflite";
-    private final String labelsPath = "labels_landing_stripe.txt";
     BroadcastReceiver smsBroadcastReceiver;
-    DAIFacade daiFacade;
+    DJIFacade djiFacade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +21,8 @@ public class CameraActivity extends AppCompatActivity {
         smsBroadcastReceiver = SmsBroadcastReceiver.getSmsBroadcastReceiver();
 
         if (null == savedInstanceState) {
-            daiFacade = new DAIFacade();
-
-            daiFacade.initDjiUI(this, R.id.container);
-
+            djiFacade = DJIFacade.getDjiFacade();
+            djiFacade.initUI(this, R.id.container);
         }
     }
 
@@ -38,12 +34,11 @@ public class CameraActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
         registerReceiver(smsBroadcastReceiver, intentFilter);
 
-        daiFacade.initCNNModel(this, modelPath, labelsPath, 70,70, R.id.container);
-        daiFacade.djiPitchForward(this, R.id.container, "forward", 0.0);
-        daiFacade.djiRollLeft(this, R.id.container, "roll_left", 0.0);
-        daiFacade.djiRollRight(this, R.id.container, "roll_right", 0.0);
-        daiFacade.djiYawLeft(this, R.id.container, "yaw_left", 0.0);
-        daiFacade.djiYawRight(this, R.id.container, "yaw_right", 0.0);
+        djiFacade.pitchForward(this, R.id.container, "forward");
+        djiFacade.rollLeft(this, R.id.container, "roll_left");
+        djiFacade.rollRight(this, R.id.container, "roll_right");
+        djiFacade.yawLeft(this, R.id.container, "yaw_left");
+        djiFacade.yawRight(this, R.id.container, "yaw_right");
 
     }
 

@@ -66,10 +66,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
-    private MobileRemoteController mMobileRemoteController;
-
     protected TextView mConnectStatusTextView;
-    private ToggleButton mBtnSimulator;
+    private Button mBtnStart;
     private Button mBtnTakeOff;
     private Button mBtnLand;
     private Button mBtnForceLand;
@@ -250,13 +248,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Log.e(TAG, "onResume");
         super.onResume();
         updateTitleBar();
-        setupListeners();
-
     }
 
     @Override
     public void onPause() {
-        tearDownListeners();
         Log.e(TAG, "onPause");
         super.onPause();
     }
@@ -285,43 +280,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mBtnTakeOff = (Button) findViewById(R.id.btn_take_off);
         mBtnLand = (Button) findViewById(R.id.btn_land);
         mBtnForceLand = (Button) findViewById(R.id.btn_force_land);
-        mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
+        mBtnStart = (Button) findViewById(R.id.btn_start_flight);
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnForceLand.setOnClickListener(this);
 
-        mBtnSimulator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if(buttonView == mBtnSimulator){
-                    onClickSimulator();
-                }
-            }
-        });
-
     }
 
-    private void setupListeners(){
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            //mMobileRemoteController = aircraft.getMobileRemoteController();
-        }
 
-
-    }
-
-    private void tearDownListeners() {
-        Aircraft aircraft = DJIApplication.getAircraftInstance();
-        if (aircraft != null) {
-            //mMobileRemoteController = aircraft.getMobileRemoteController();
-
-        }
-    }
-
-    //TODO: FlightController here can possibly be used to override the mobile remote controller. Check up!
+    //TODO: Add Start Flight here when the code is done
     @Override
     public void onClick(View v) {
         Aircraft aircraft = DJIApplication.getAircraftInstance();
@@ -386,7 +355,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    private void onClickSimulator(){
+
+    public void startFlight(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
