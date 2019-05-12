@@ -1,0 +1,3 @@
+[submodule "DAILIB"]
+	path = DAILIB
+	url = https://github.com/hatati/DAILIB.git
