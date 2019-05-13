@@ -274,14 +274,14 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
                                         djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
                                         djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.3f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(0.1f);
                                         break;
                                     case PITCH_BACKWARDS:
                                         System.out.println("BACKWARDS");
                                         djiFacade.getmMobileRemoteController().setLeftStickHorizontal(0f);
                                         djiFacade.getmMobileRemoteController().setLeftStickVertical(0f);
                                         djiFacade.getmMobileRemoteController().setRightStickHorizontal(0f);
-                                        djiFacade.getmMobileRemoteController().setRightStickVertical(-0.4f);
+                                        djiFacade.getmMobileRemoteController().setRightStickVertical(-0.1f);
                                         break;
                                     case ROLL_LEFT:
                                         System.out.println("ROLL LEFT");
@@ -397,7 +397,7 @@ public class Camera2Fragment extends Fragment implements ActivityCompat.OnReques
 
             // Try to load model.
             try {
-                classifier = new LandingStripeCNN(getActivity());
+                classifier = new HalfCircleCNN(getActivity());
 
             } catch (IOException e) {
                 Log.d(TAG, "Failed to load", e);
