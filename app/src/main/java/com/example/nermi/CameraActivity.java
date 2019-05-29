@@ -12,12 +12,17 @@ import com.nermi.dailib.DJIFacade;
 public class CameraActivity extends AppCompatActivity {
 
     BroadcastReceiver smsBroadcastReceiver;
+
+    /**
+     * Use DJIFacede since we are comunicating with a DJI drone
+     */
     DJIFacade djiFacade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        // Init broadcast receiver
         smsBroadcastReceiver = SmsBroadcastReceiver.getSmsBroadcastReceiver();
 
         if (null == savedInstanceState) {
@@ -34,6 +39,7 @@ public class CameraActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter(SmsBroadcastReceiver.SMS_RECEIVED);
         registerReceiver(smsBroadcastReceiver, intentFilter);
 
+        // Setup control commands and their respective labels
         djiFacade.pitchForward(this, R.id.container, "forward");
         djiFacade.rollLeft(this, R.id.container, "roll_left");
         djiFacade.rollRight(this, R.id.container, "roll_right");

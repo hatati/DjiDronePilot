@@ -15,7 +15,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
     public static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
     private static class SingletonHelper{
-        // Nested class is referenced when getDjiFacade is called
+        // Nested class is referenced when getSmsBroadcastReceiver is called
         private static final SmsBroadcastReceiver _sms_broadcast_receiver = new SmsBroadcastReceiver();
     }
 
@@ -25,6 +25,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // Control DJIDronePilot remotely with SMS Texts
         if (intent.getAction().equals(SMS_RECEIVED)) {
 
             Bundle bundle = intent.getExtras();
@@ -35,7 +36,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 sms[n] = SmsMessage.createFromPdu((byte[]) messages[n]);
             }
             for (SmsMessage msg : sms) {
-                Log.e("RECEIVED MSG",":"+msg.getMessageBody());
+                Log.e("RECEIVED MSG",":" + msg.getMessageBody());
 
                 if(context instanceof MainActivity){
                     switch (msg.getMessageBody()){

@@ -71,8 +71,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private Button mBtnTakeOff;
     private Button mBtnLand;
     private Button mBtnForceLand;
-    private FlightController mFlightController;
 
+    private FlightController mFlightController;
     private BroadcastReceiver smsBroadcastReceiver;
 
 
@@ -136,6 +136,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    /**
+     * Register the application to get authorization to use the DJI Mobile SDK
+     */
     private void startSDKRegistration() {
         if (isRegistrationInProgress.compareAndSet(false, true)) {
             AsyncTask.execute(new Runnable() {
@@ -209,6 +212,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         });
     }
 
+    /**
+     * Update titile bar based on the connection state broadcast from DJIApplication
+     */
     private void updateTitleBar() {
         if(mConnectStatusTextView == null) return;
         boolean ret = false;
@@ -289,9 +295,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     }
 
-
-    //TODO: Add Start Flight here when the code is done
-    @Override
     public void onClick(View v) {
         Aircraft aircraft = DJIApplication.getAircraftInstance();
         if (aircraft != null) {
@@ -354,7 +357,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
         }
     }
-
 
     public void startFlight(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
