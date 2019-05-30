@@ -50,6 +50,24 @@ Before running the application remember to add your DJI API key in the `AndroidM
             android:value="YOUR API KEY HERE" />
 ```
 
+### Example 
+DjiDronePilot together with DAILIB is designed in such a way that the smartphone needs to be attached to the drone. The image below shows a custom way to attach a smartphone to the drone with the use of a regular smartphone holder and velcro tape:
+
+![alt text](https://github.com/hatati/DjiDronePilot/blob/master/Example%20Images/phone_on_drone1_S.jpg)
+
+
+#### Main Activity
+The phone needs to connect to the drone via WiFi. The title bar text will update to reflect the drone model:
+
+![alt text](https://github.com/hatati/DjiDronePilot/blob/master/Example%20Images/main_activity_S.png)
+
+
+#### Camera Activity
+When `CameraActivity` is started the application will start to classify the images from the videostream and send commands to the drone accordingly:
+
+![alt text](https://github.com/hatati/DjiDronePilot/blob/master/Example%20Images/camera_activity_S.png)
+
+**Note**: The virtual sticks in the images above have since been removed.
 
 ### License
 The library is released under the GNU General Public License `GPL-3.0`.
